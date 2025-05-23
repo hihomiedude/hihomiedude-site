@@ -16,9 +16,6 @@
             color: #ffffff;
             font-family: 'Courier New', monospace;
             font-size: 16px;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -54,9 +51,6 @@
         .lulw-img {
             width: 100px;
             height: 100px;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
         }
         
         .center-box {
@@ -99,7 +93,6 @@
             color: #00ff00 !important;
         }
         
-        /* Intentionally bad responsive design */
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -114,8 +107,6 @@
                 font-size: 14px;
             }
         }
-        
-        /* Extra shitty effects - REMOVED */
     </style>
 </head>
 <body>
@@ -130,15 +121,15 @@
         
         <div class="center-box">
             <div class="link-item">
-                <a href="https://twitch.tv" class="twitch-link">twitch.tv/hihomiedude</a>
+                <a href="https://twitch.tv/hihomiedude" class="twitch-link">twitch.tv/hihomiedude</a>
             </div>
             
             <div class="link-item">
-                <a href="https://discord.com" class="discord-link">twitch.tv/hihomiedude</a>
+                <a href="https://twitch.tv/hihomiedude" class="discord-link">twitch.tv/hihomiedude</a>
             </div>
             
             <div class="link-item">
-                <a href="#" class="generic-link">twitch.tv/hihomiedude</a>
+                <a href="https://twitch.tv/hihomiedude" class="generic-link">twitch.tv/hihomiedude</a>
             </div>
         </div>
         
@@ -146,10 +137,5 @@
             <img src="LULW.png" alt="LULW" class="lulw-img">
         </div>
     </div>
-    
-    <script>
-        // Simple, lazy JavaScript - no effects
-        console.log("site loaded, i guess");
-    </script>
 </body>
 </html>
