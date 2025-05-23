@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hihomiedude</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            padding: 10px 20px;
+            margin-bottom: 30px;
+            background-color: #2d2d2d;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: normal;
+        }
+        
+        .main-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .side-image {
+            padding: 10px;
+            background-color: #2d2d2d;
+            min-width: 120px;
+        }
+        
+        .lulw-img {
+            width: 100px;
+            height: 100px;
+            background-color: #444;
+            border: 2px solid #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-align: center;
+            image-rendering: pixelated;
+        }
+        
+        .center-box {
+            background-color: #2d2d2d;
+            padding: 40px;
+            flex: 1;
+            min-height: 400px;
+        }
+        
+        .link-item {
+            margin: 40px 0;
+            font-size: 18px;
+        }
+        
+        .link-item a {
+            color: #ffffff;
+            text-decoration: none;
+            border: 2px solid #555;
+            padding: 8px 15px;
+            background-color: #333;
+            display: inline-block;
+            transition: none;
+        }
+        
+        .link-item a:hover {
+            background-color: #444;
+            border-color: #777;
+        }
+        
+        .twitch-link {
+            color: #9146ff !important;
+        }
+        
+        .discord-link {
+            color: #5865f2 !important;
+        }
+        
+        .generic-link {
+            color: #00ff00 !important;
+        }
+        
+        /* Intentionally bad responsive design */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .side-image {
+                order: -1;
+            }
+            
+            body {
+                font-size: 14px;
+            }
+        }
+        
+        /* Extra shitty effects - REMOVED */
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>hihomiedude</h1>
+    </div>
+    
+    <div class="main-container">
+        <div class="side-image">
+            <div class="lulw-img">
+                LULW.png<br>
+                (low res image here)
+            </div>
+        </div>
+        
+        <div class="center-box">
+            <div class="link-item">
+                <a href="https://twitch.tv" class="twitch-link">twitch.tv</a>
+            </div>
+            
+            <div class="link-item">
+                <a href="https://discord.com" class="discord-link">discord</a>
+            </div>
+            
+            <div class="link-item">
+                <a href="#" class="generic-link">link</a>
+            </div>
+        </div>
+        
+        <div class="side-image">
+            <div class="lulw-img">
+                LULW.png<br>
+                (low res image here)
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Simple, lazy JavaScript - no effects
+        console.log("site loaded, i guess");
+    </script>
+</body>
+</html>
