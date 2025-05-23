@@ -54,14 +54,9 @@
         .lulw-img {
             width: 100px;
             height: 100px;
-            background-color: #444;
-            border: 2px solid #666;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            text-align: center;
             image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
         
         .center-box {
@@ -69,6 +64,7 @@
             padding: 40px;
             flex: 1;
             min-height: 400px;
+            text-align: center;
         }
         
         .link-item {
@@ -129,10 +125,7 @@
     
     <div class="main-container">
         <div class="side-image">
-            <div class="lulw-img">
-                LULW.png<br>
-                (low res image here)
-            </div>
+            <img src="LULW.png" alt="LULW" class="lulw-img">
         </div>
         
         <div class="center-box">
@@ -150,10 +143,7 @@
         </div>
         
         <div class="side-image">
-            <div class="lulw-img">
-                LULW.png<br>
-                (low res image here)
-            </div>
+            <img src="LULW.png" alt="LULW" class="lulw-img">
         </div>
     </div>
     
