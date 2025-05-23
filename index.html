@@ -93,6 +93,23 @@
             color: #00ff00 !important;
         }
         
+        .audio-controls {
+            margin-top: 20px;
+        }
+        
+        .mute-button {
+            background-color: #333;
+            color: white;
+            border: 2px solid #555;
+            padding: 8px 15px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+        }
+        
+        .mute-button:hover {
+            background-color: #444;
+        }
+        
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -131,11 +148,34 @@
             <div class="link-item">
                 <a href="https://twitch.tv/hihomiedude" class="generic-link">twitch.tv/hihomiedude</a>
             </div>
+            
+            <div class="audio-controls">
+                <button class="mute-button" id="muteBtn">🔊 Mute</button>
+            </div>
         </div>
         
         <div class="side-image">
             <img src="LULW.png" alt="LULW" class="lulw-img">
         </div>
     </div>
+    
+    <audio id="bgMusic" autoplay loop>
+        <source src="clarity.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const muteBtn = document.getElementById('muteBtn');
+        
+        muteBtn.addEventListener('click', function() {
+            if (audio.muted) {
+                audio.muted = false;
+                muteBtn.textContent = '🔊 Mute';
+            } else {
+                audio.muted = true;
+                muteBtn.textContent = '🔇 Unmute';
+            }
+        });
+    </script>
 </body>
 </html>
