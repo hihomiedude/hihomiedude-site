@@ -159,29 +159,38 @@
         </div>
     </div>
     
-    <audio id="bgMusic" autoplay loop>
+    <audio id="bgMusic" loop>
         <source src="clarity.mp3" type="audio/mpeg">
     </audio>
     
     <script>
         const audio = document.getElementById('bgMusic');
         const muteBtn = document.getElementById('muteBtn');
+        let audioStarted = false;
         
-        // Try to play audio and detect if it's blocked
-        audio.play().catch(() => {
-            muteBtn.textContent = '🔇 Click for Sound';
-            muteBtn.style.backgroundColor = '#ff4444';
-        });
+        // Remove autoplay, start with manual trigger
+        muteBtn.textContent = '🔇 Click for Sound';
+        muteBtn.style.backgroundColor = '#ff4444';
         
         muteBtn.addEventListener('click', function() {
-            if (audio.muted) {
-                audio.muted = false;
-                audio.play();
-                muteBtn.textContent = '🔊 Mute';
-                muteBtn.style.backgroundColor = '#333';
+            if (!audioStarted) {
+                // First click - start audio
+                audio.play().then(() => {
+                    audioStarted = true;
+                    muteBtn.textContent = '🔊 Mute';
+                    muteBtn.style.backgroundColor = '#333';
+                }).catch(() => {
+                    muteBtn.textContent = '🔇 Audio Blocked';
+                });
             } else {
-                audio.muted = true;
-                muteBtn.textContent = '🔇 Unmute';
+                // Normal mute/unmute toggle
+                if (audio.muted) {
+                    audio.muted = false;
+                    muteBtn.textContent = '🔊 Mute';
+                } else {
+                    audio.muted = true;
+                    muteBtn.textContent = '🔇 Unmute';
+                }
             }
         });
     </script>
