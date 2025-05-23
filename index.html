@@ -167,10 +167,18 @@
         const audio = document.getElementById('bgMusic');
         const muteBtn = document.getElementById('muteBtn');
         
+        // Try to play audio and detect if it's blocked
+        audio.play().catch(() => {
+            muteBtn.textContent = '🔇 Click for Sound';
+            muteBtn.style.backgroundColor = '#ff4444';
+        });
+        
         muteBtn.addEventListener('click', function() {
             if (audio.muted) {
                 audio.muted = false;
+                audio.play();
                 muteBtn.textContent = '🔊 Mute';
+                muteBtn.style.backgroundColor = '#333';
             } else {
                 audio.muted = true;
                 muteBtn.textContent = '🔇 Unmute';
