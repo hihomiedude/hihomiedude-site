@@ -138,15 +138,11 @@
         
         <div class="center-box">
             <div class="link-item">
-                <a href="https://twitch.tv/hihomiedude" class="twitch-link">twitch.tv/hihomiedude</a>
+                <a href="https://twitch.tv/hihomiedude" class="twitch-link">twitch</a>
             </div>
             
             <div class="link-item">
-                <a href="https://twitch.tv/hihomiedude" class="discord-link">twitch.tv/hihomiedude</a>
-            </div>
-            
-            <div class="link-item">
-                <a href="https://twitch.tv/hihomiedude" class="generic-link">twitch.tv/hihomiedude</a>
+                <a href="https://discord.gg/kz3c5U6U67" class="discord-link">discord</a>
             </div>
             
             <div class="audio-controls">
@@ -169,7 +165,7 @@
         let audioStarted = false;
         
         // Remove autoplay, start with manual trigger
-        muteBtn.textContent = '🔇 Click for Sound';
+        muteBtn.textContent = '🔇 click for sound';
         muteBtn.style.backgroundColor = '#ff4444';
         
         muteBtn.addEventListener('click', function() {
@@ -177,19 +173,19 @@
                 // First click - start audio
                 audio.play().then(() => {
                     audioStarted = true;
-                    muteBtn.textContent = '🔊 Mute';
+                    muteBtn.textContent = '🔊 mute';
                     muteBtn.style.backgroundColor = '#333';
                 }).catch(() => {
-                    muteBtn.textContent = '🔇 Audio Blocked';
+                    muteBtn.textContent = '🔇 audio blocked';
                 });
             } else {
                 // Normal mute/unmute toggle
                 if (audio.muted) {
                     audio.muted = false;
-                    muteBtn.textContent = '🔊 Mute';
+                    muteBtn.textContent = '🔊 mute';
                 } else {
                     audio.muted = true;
-                    muteBtn.textContent = '🔇 Unmute';
+                    muteBtn.textContent = '🔇 unmute';
                 }
             }
         });
