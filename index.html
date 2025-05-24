@@ -114,14 +114,47 @@
             .main-container {
                 flex-direction: column;
                 align-items: center;
+                gap: 15px;
+            }
+            
+            .side-image:first-child {
+                display: block;
+                order: -1;
+            }
+            
+            .side-image:last-child {
+                display: none;
             }
             
             .side-image {
-                order: -1;
+                padding: 8px;
+                min-width: auto;
+            }
+            
+            .lulw-img {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .center-box {
+                padding: 20px;
+                min-height: auto;
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .link-item {
+                margin: 20px 0;
+            }
+            
+            .header {
+                margin-bottom: 15px;
+                padding: 8px 15px;
             }
             
             body {
                 font-size: 14px;
+                padding: 10px;
             }
         }
     </style>
@@ -138,15 +171,15 @@
         
         <div class="center-box">
             <div class="link-item">
-                <a href="https://twitch.tv/hihomiedude" class="twitch-link">twitch</a>
+                <a href="https://twitch.tv/hihomiedude" class="twitch-link" target="_blank">twitch</a>
             </div>
             
             <div class="link-item">
-                <a href="https://discord.gg/kz3c5U6U67" class="discord-link">discord</a>
+                <a href="https://discord.gg/kz3c5U6U67" class="discord-link" target="_blank">discord</a>
             </div>
             
             <div class="link-item">
-                <a href="https://myanimelist.net/animelist/hihomiedude?status=2&order=4&order2=0" class="generic-link">anime</a>
+                <a href="https://myanimelist.net/animelist/hihomiedude?status=2&order=4&order2=0" class="generic-link" target="_blank">anime</a>
             </div>
             
             <div class="audio-controls">
