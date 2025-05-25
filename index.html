@@ -21,6 +21,7 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            position: relative;
         }
         
         .header {
@@ -46,11 +47,15 @@
             padding: 10px;
             background-color: #2d2d2d;
             min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .lulw-img {
             width: 100px;
             height: 100px;
+            display: block;
         }
         
         .center-box {
@@ -110,6 +115,46 @@
             background-color: #444;
         }
         
+        /* Song info popup */
+        .song-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #2d2d2d;
+            border: 2px solid #555;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            display: none;
+            z-index: 1000;
+        }
+        
+        /* Dancing images */
+        .dancing-images {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            gap: 20px;
+            z-index: 999;
+        }
+        
+        .dancing-img {
+            width: 64px;
+            height: 64px;
+            animation: bounce 0.5s infinite alternate;
+        }
+        
+        .dancing-img:nth-child(2) {
+            animation-delay: 0.25s;
+        }
+        
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+        
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -156,6 +201,23 @@
                 font-size: 14px;
                 padding: 10px;
             }
+            
+            .song-info {
+                top: 10px;
+                right: 10px;
+                padding: 10px;
+                font-size: 12px;
+            }
+            
+            .dancing-images {
+                bottom: 10px;
+                gap: 15px;
+            }
+            
+            .dancing-img {
+                width: 48px;
+                height: 48px;
+            }
         }
     </style>
 </head>
@@ -192,6 +254,17 @@
         </div>
     </div>
     
+    <!-- Song info popup -->
+    <div class="song-info" id="songInfo">
+        "clarity*" by "sennoh"
+    </div>
+    
+    <!-- Dancing images -->
+    <div class="dancing-images" id="dancingImages">
+        <img src="catJAM.gif" alt="catJAM" class="dancing-img">
+        <img src="ratJAM.gif" alt="ratJAM" class="dancing-img">
+    </div>
+    
     <audio id="bgMusic" loop>
         <source src="clarity.mp3" type="audio/mpeg">
     </audio>
@@ -199,11 +272,23 @@
     <script>
         const audio = document.getElementById('bgMusic');
         const muteBtn = document.getElementById('muteBtn');
+        const songInfo = document.getElementById('songInfo');
+        const dancingImages = document.getElementById('dancingImages');
         let audioStarted = false;
         
         // Remove autoplay, start with manual trigger
         muteBtn.textContent = '🔇 click for sound';
         muteBtn.style.backgroundColor = '#ff4444';
+        
+        function showMusicElements() {
+            songInfo.style.display = 'block';
+            dancingImages.style.display = 'flex';
+        }
+        
+        function hideMusicElements() {
+            songInfo.style.display = 'none';
+            dancingImages.style.display = 'none';
+        }
         
         muteBtn.addEventListener('click', function() {
             if (!audioStarted) {
@@ -212,6 +297,7 @@
                     audioStarted = true;
                     muteBtn.textContent = '🔊 mute';
                     muteBtn.style.backgroundColor = '#333';
+                    showMusicElements();
                 }).catch(() => {
                     muteBtn.textContent = '🔇 audio blocked';
                 });
@@ -220,12 +306,18 @@
                 if (audio.muted) {
                     audio.muted = false;
                     muteBtn.textContent = '🔊 mute';
+                    showMusicElements();
                 } else {
                     audio.muted = true;
                     muteBtn.textContent = '🔇 unmute';
+                    hideMusicElements();
                 }
             }
         });
+        
+        // Hide elements when audio ends or pauses
+        audio.addEventListener('pause', hideMusicElements);
+        audio.addEventListener('ended', hideMusicElements);
     </script>
 </body>
 </html>
