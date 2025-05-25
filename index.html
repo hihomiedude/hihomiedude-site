@@ -1,4 +1,13 @@
-<!DOCTYPE html>
+<!-- Song info popup -->
+    <div class="song-info" id="songInfo">
+        "clarity*" by "sennoh"
+    </div>
+    
+    <!-- Dancing images -->
+    <div class="dancing-images" id="dancingImages">
+        <img src="catJAM.gif" alt="catJAM" class="dancing-img">
+        <img src="ratJAM.gif" alt="ratJAM" class="dancing-img">
+    </div><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -48,8 +57,10 @@
             background-color: #2d2d2d;
             min-width: 120px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 15px;
         }
         
         .lulw-img {
@@ -115,44 +126,37 @@
             background-color: #444;
         }
         
-        /* Song info popup */
+        /* Song info below mute button */
         .song-info {
-            position: fixed;
-            top: 20px;
-            right: 20px;
             background-color: #2d2d2d;
             border: 2px solid #555;
-            padding: 15px;
+            padding: 10px;
             font-family: 'Courier New', monospace;
             font-size: 14px;
             display: none;
-            z-index: 1000;
+            margin-top: 15px;
         }
         
-        /* Dancing images */
-        .dancing-images {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: none;
-            gap: 20px;
-            z-index: 999;
+        /* Dancing images below LULW images */
+        .side-image {
+            padding: 10px;
+            background-color: #2d2d2d;
+            min-width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
         
         .dancing-img {
             width: 64px;
             height: 64px;
-            animation: bounce 0.5s infinite alternate;
+            display: none;
         }
         
-        .dancing-img:nth-child(2) {
-            animation-delay: 0.25s;
-        }
-        
-        @keyframes bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
+        .dancing-img.show {
+            display: block;
         }
         
         @media (max-width: 768px) {
@@ -229,6 +233,7 @@
     <div class="main-container">
         <div class="side-image">
             <img src="LULW.png" alt="LULW" class="lulw-img">
+            <img src="catJAM.gif" alt="catJAM" class="dancing-img" id="catJam">
         </div>
         
         <div class="center-box">
@@ -246,11 +251,16 @@
             
             <div class="audio-controls">
                 <button class="mute-button" id="muteBtn">🔊 Mute</button>
+                <!-- Song info below mute button -->
+                <div class="song-info" id="songInfo">
+                    "clarity*" by "sennoh"
+                </div>
             </div>
         </div>
         
         <div class="side-image">
             <img src="LULW.png" alt="LULW" class="lulw-img">
+            <img src="ratJAM.gif" alt="ratJAM" class="dancing-img" id="ratJam">
         </div>
     </div>
     
@@ -273,7 +283,6 @@
         const audio = document.getElementById('bgMusic');
         const muteBtn = document.getElementById('muteBtn');
         const songInfo = document.getElementById('songInfo');
-        const dancingImages = document.getElementById('dancingImages');
         let audioStarted = false;
         
         // Remove autoplay, start with manual trigger
@@ -282,12 +291,14 @@
         
         function showMusicElements() {
             songInfo.style.display = 'block';
-            dancingImages.style.display = 'flex';
+            document.getElementById('catJam').classList.add('show');
+            document.getElementById('ratJam').classList.add('show');
         }
         
         function hideMusicElements() {
             songInfo.style.display = 'none';
-            dancingImages.style.display = 'none';
+            document.getElementById('catJam').classList.remove('show');
+            document.getElementById('ratJam').classList.remove('show');
         }
         
         muteBtn.addEventListener('click', function() {
