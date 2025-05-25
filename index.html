@@ -1,13 +1,4 @@
-<!-- Song info popup -->
-    <div class="song-info" id="songInfo">
-        "clarity*" by "sennoh"
-    </div>
-    
-    <!-- Dancing images -->
-    <div class="dancing-images" id="dancingImages">
-        <img src="catJAM.gif" alt="catJAM" class="dancing-img">
-        <img src="ratJAM.gif" alt="ratJAM" class="dancing-img">
-    </div><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -35,13 +26,25 @@
         
         .header {
             padding: 10px 20px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             background-color: #2d2d2d;
         }
         
         .header h1 {
             font-size: 20px;
             font-weight: normal;
+        }
+        
+        /* Song info below header */
+        .song-info {
+            background-color: #2d2d2d;
+            border: 2px solid #555;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
         }
         
         .main-container {
@@ -66,6 +69,16 @@
         .lulw-img {
             width: 100px;
             height: 100px;
+            display: block;
+        }
+        
+        .dancing-img {
+            width: 100px;
+            height: 100px;
+            display: none;
+        }
+        
+        .dancing-img.show {
             display: block;
         }
         
@@ -126,38 +139,6 @@
             background-color: #444;
         }
         
-        /* Song info below header */
-        .song-info {
-            background-color: #2d2d2d;
-            border: 2px solid #555;
-            padding: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            display: none;
-        }
-        
-        /* Dancing images below LULW images */
-        .side-image {
-            padding: 10px;
-            background-color: #2d2d2d;
-            min-width: 120px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .dancing-img {
-            width: 64px;
-            height: 64px;
-            display: none;
-        }
-        
-        .dancing-img.show {
-            display: block;
-        }
-        
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -184,6 +165,11 @@
                 height: 80px;
             }
             
+            .dancing-img {
+                width: 80px;
+                height: 80px;
+            }
+            
             .center-box {
                 padding: 20px;
                 min-height: auto;
@@ -196,7 +182,7 @@
             }
             
             .header {
-                margin-bottom: 15px;
+                margin-bottom: 8px;
                 padding: 8px 15px;
             }
             
@@ -206,20 +192,9 @@
             }
             
             .song-info {
-                top: 10px;
-                right: 10px;
-                padding: 10px;
+                padding: 8px;
                 font-size: 12px;
-            }
-            
-            .dancing-images {
-                bottom: 10px;
-                gap: 15px;
-            }
-            
-            .dancing-img {
-                width: 48px;
-                height: 48px;
+                margin-bottom: 15px;
             }
         }
     </style>
@@ -230,7 +205,7 @@
     </div>
     
     <!-- Song info below header -->
-    <div class="song-info" id="songInfo" style="text-align: center; margin-bottom: 20px;">
+    <div class="song-info" id="songInfo">
         "clarity*" by "sennoh"
     </div>
     
@@ -262,17 +237,6 @@
             <img src="LULW.png" alt="LULW" class="lulw-img">
             <img src="ratJAM.gif" alt="ratJAM" class="dancing-img" id="ratJam">
         </div>
-    </div>
-    
-    <!-- Song info popup -->
-    <div class="song-info" id="songInfo">
-        "clarity*" by "sennoh"
-    </div>
-    
-    <!-- Dancing images -->
-    <div class="dancing-images" id="dancingImages">
-        <img src="catJAM.gif" alt="catJAM" class="dancing-img">
-        <img src="ratJAM.gif" alt="ratJAM" class="dancing-img">
     </div>
     
     <audio id="bgMusic" loop>
