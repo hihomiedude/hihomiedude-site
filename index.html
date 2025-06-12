@@ -338,6 +338,10 @@
             songInfo.style.display = 'block';
             document.getElementById('catJam').classList.add('show');
             document.getElementById('ratJam').classList.add('show');
+            // Start visualizer immediately
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
             drawVisualizer();
         }
         
@@ -408,13 +412,23 @@
         
         muteBtn.addEventListener('click', function() {
             if (!audioStarted || audio.paused) {
-                // Play audio
+                // Initialize audio context first
                 initAudioContext();
+                
+                // Start playing immediately
                 audio.play().then(() => {
                     audioStarted = true;
                     muteBtn.textContent = '❚❚ pause';
                     muteBtn.style.backgroundColor = '#333';
-                    showMusicElements();
+                    
+                    // Force audio context to resume and start visualizer immediately
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume().then(() => {
+                            showMusicElements();
+                        });
+                    } else {
+                        showMusicElements();
+                    }
                 }).catch(() => {
                     muteBtn.textContent = '▶ blocked';
                 });
