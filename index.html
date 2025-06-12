@@ -324,9 +324,9 @@
                 analyser.connect(audioContext.destination);
                 
                 analyser.fftSize = 256;
-                analyser.minDecibels = -90;
-                analyser.maxDecibels = -10;
-                analyser.smoothingTimeConstant = 0.85;
+                analyser.minDecibels = -60;
+                analyser.maxDecibels = -20;
+                analyser.smoothingTimeConstant = 0.7;
                 const bufferLength = analyser.frequencyBinCount;
                 dataArray = new Uint8Array(bufferLength);
             }
@@ -359,21 +359,18 @@
             let x = 0;
             
             for (let i = 0; i < dataArray.length; i++) {
-                // Apply exponential scaling to exaggerate differences
-                let value = dataArray[i] / 255;
+                let value = dataArray[i];
                 
-                // Apply power function to increase contrast
-                value = Math.pow(value, 2.5);
-                
-                // Add minimum height for visible bars
-                if (value > 0.02) {
-                    value = value * 0.7 + 0.3;
+                // Amplify bass frequencies (first 20% of spectrum)
+                if (i < dataArray.length * 0.2) {
+                    value = value * 1.5;
                 }
                 
-                const barHeight = value * canvas.height * 0.9;
+                // No minimum height - let bars go to zero
+                const barHeight = (value / 255) * canvas.height;
                 
                 // Create gradient from green to orange to red
-                const percent = barHeight / (canvas.height * 0.9);
+                const percent = barHeight / canvas.height;
                 let r, g, b;
                 
                 if (percent < 0.5) {
