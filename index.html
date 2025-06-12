@@ -361,9 +361,9 @@
             ctx.fillStyle = '#1a1a1a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Only show first 64 bins for better visualization
-            const barsToShow = 64;
-            const barWidth = canvas.width / barsToShow - 2;
+            // Show more bins to capture higher frequencies
+            const barsToShow = 128;
+            const barWidth = canvas.width / barsToShow - 1;
             let x = 0;
             
             for (let i = 0; i < barsToShow; i++) {
@@ -408,7 +408,7 @@
                 ctx.fillStyle = `rgb(${r},${g},${b})`;
                 ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
                 
-                x += barWidth + 2;
+                x += barWidth + 1;
             }
         }
         
