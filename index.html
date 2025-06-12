@@ -45,6 +45,36 @@
             text-align: center;
             margin-bottom: 20px;
             display: none;
+            position: relative;
+        }
+        
+        .progress-container {
+            position: relative;
+            width: 100%;
+            height: 20px;
+            margin-top: 10px;
+        }
+        
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #555;
+            transform: translateY(-50%);
+        }
+        
+        .progress-dot {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            width: 12px;
+            height: 12px;
+            background-color: #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: left 0.1s linear;
         }
         
         .main-container {
@@ -213,6 +243,10 @@
     <!-- Song info below header -->
     <div class="song-info" id="songInfo">
         "clarity*" by "sennoh"
+        <div class="progress-container">
+            <div class="progress-line"></div>
+            <div class="progress-dot" id="progressDot"></div>
+        </div>
     </div>
     
     <div class="main-container">
@@ -260,8 +294,8 @@
         let audioStarted = false;
         
         // Remove autoplay, start with manual trigger
-        muteBtn.textContent = '🔇 click for sound';
-        muteBtn.style.backgroundColor = '#ff4444';
+        muteBtn.textContent = '▶ play';
+        muteBtn.style.backgroundColor = '#333';
         
         function showMusicElements() {
             songInfo.style.display = 'block';
@@ -276,33 +310,37 @@
         }
         
         muteBtn.addEventListener('click', function() {
-            if (!audioStarted) {
-                // First click - start audio
+            if (!audioStarted || audio.paused) {
+                // Play audio
                 audio.play().then(() => {
                     audioStarted = true;
-                    muteBtn.textContent = '🔊 mute';
+                    muteBtn.textContent = '❚❚ pause';
                     muteBtn.style.backgroundColor = '#333';
                     showMusicElements();
                 }).catch(() => {
-                    muteBtn.textContent = '🔇 audio blocked';
+                    muteBtn.textContent = '▶ blocked';
                 });
             } else {
-                // Normal mute/unmute toggle
-                if (audio.muted) {
-                    audio.muted = false;
-                    muteBtn.textContent = '🔊 mute';
-                    showMusicElements();
-                } else {
-                    audio.muted = true;
-                    muteBtn.textContent = '🔇 unmute';
-                    hideMusicElements();
-                }
+                // Pause audio
+                audio.pause();
+                muteBtn.textContent = '▶ play';
+                hideMusicElements();
             }
         });
         
-        // Hide elements when audio ends or pauses
-        audio.addEventListener('pause', hideMusicElements);
-        audio.addEventListener('ended', hideMusicElements);
+        // Update progress bar
+        audio.addEventListener('timeupdate', function() {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            if (!isNaN(progress)) {
+                document.getElementById('progressDot').style.left = progress + '%';
+            }
+        });
+        
+        // Hide elements when audio ends
+        audio.addEventListener('ended', function() {
+            hideMusicElements();
+            muteBtn.textContent = '▶ play';
+        });
     </script>
 </body>
 </html>
