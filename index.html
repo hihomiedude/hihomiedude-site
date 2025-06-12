@@ -370,7 +370,7 @@
                 let value = dataArray[i];
                 
                 // Progressive frequency scaling - boost higher frequencies more
-                const freqScaling = 1 + (i / barsToShow) * 1.5; // Scale from 1x to 2.5x
+                const freqScaling = 1 + (i / barsToShow) * 0.5; // Scale from 1x to 1.5x
                 value = value * freqScaling;
                 
                 // Additional bass boost for low frequencies
