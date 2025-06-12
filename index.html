@@ -364,22 +364,29 @@
             ctx.fillStyle = '#1a1a1a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Show more bins to capture higher frequencies
-            const barsToShow = 128;
+            // Use 64 bars with better frequency distribution
+            const barsToShow = 64;
             const barWidth = canvas.width / barsToShow - 1;
             let x = 0;
             
             for (let i = 0; i < barsToShow; i++) {
-                let value = dataArray[i];
+                // Sample more bins for higher frequencies
+                let binIndex = i;
+                if (i > 32) {
+                    // For bars 33-64, sample from higher frequency bins
+                    binIndex = Math.floor(i * 2);
+                }
+                
+                let value = dataArray[binIndex];
                 
                 // Progressive frequency scaling - boost higher frequencies more
-                const freqScaling = 1 + (i / barsToShow) * 0.5; // Scale from 1x to 1.5x
+                const freqScaling = 1 + (i / barsToShow) * 0.8; // Scale from 1x to 1.8x
                 value = value * freqScaling;
                 
                 // Additional bass boost for low frequencies
-                if (i < 8) {
+                if (i < 4) {
                     value = value * 1.2;  // Very low bass
-                } else if (i < 16) {
+                } else if (i < 8) {
                     value = value * 1.1;  // Mid bass
                 }
                 
