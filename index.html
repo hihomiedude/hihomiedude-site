@@ -121,13 +121,13 @@
             display: block;
         }
         
-        @keyframes catBop {
+        @keyframes catJAM {
             0%, 100% { transform: scale(1) translateY(0); }
             50% { transform: scale(1.05) translateY(-5px); }
         }
         
-        .cat-bop {
-            animation: catBop 0.448s ease-in-out infinite;
+        .catJAM {
+            animation: catJAM 0.448s ease-in-out infinite;
         }
         
         .center-box {
@@ -344,15 +344,15 @@
         
         function showMusicElements() {
             songInfo.style.display = 'block';
-            document.getElementById('catJam').classList.add('show', 'cat-bop');
-            document.getElementById('ratJam').classList.add('show', 'cat-bop');
+            document.getElementById('catJam').classList.add('show', 'catJAM');
+            document.getElementById('ratJam').classList.add('show', 'catJAM');
             drawVisualizer();
         }
         
         function hideMusicElements() {
             songInfo.style.display = 'none';
-            document.getElementById('catJam').classList.remove('show', 'cat-bop');
-            document.getElementById('ratJam').classList.remove('show', 'cat-bop');
+            document.getElementById('catJam').classList.remove('show', 'catJAM');
+            document.getElementById('ratJam').classList.remove('show', 'catJAM');
         }
         
         function drawVisualizer() {
