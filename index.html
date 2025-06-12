@@ -323,7 +323,7 @@
                 source.connect(analyser);
                 analyser.connect(audioContext.destination);
                 
-                analyser.fftSize = 256;
+                analyser.fftSize = 2048;
                 analyser.minDecibels = -70;
                 analyser.maxDecibels = -10;
                 analyser.smoothingTimeConstant = 0.8;
@@ -355,23 +355,29 @@
             ctx.fillStyle = '#1a1a1a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            const barWidth = (canvas.width / dataArray.length) * 2.5;
+            // Only show first 64 bins for better visualization
+            const barsToShow = 64;
+            const barWidth = canvas.width / barsToShow - 2;
             let x = 0;
             
-            for (let i = 0; i < dataArray.length; i++) {
+            for (let i = 0; i < barsToShow; i++) {
                 let value = dataArray[i];
                 
-                // Amplify bass frequencies (first 20% of spectrum) but less aggressively
-                if (i < dataArray.length * 0.2) {
-                    value = value * 1.2;
+                // Amplify bass frequencies more progressively
+                if (i < 8) {
+                    value = value * 1.5;  // Very low bass
+                } else if (i < 16) {
+                    value = value * 1.3;  // Mid bass
+                } else if (i < 24) {
+                    value = value * 1.1;  // Upper bass
                 }
                 
                 // Apply slight exponential scaling for smoother response
                 value = Math.pow(value / 255, 1.5) * 255;
                 
-                // Add minimum height of 5% if there's any signal
+                // Add minimum height of 10% if there's any signal
                 const normalizedValue = value / 255;
-                const heightMultiplier = value > 0 ? Math.max(normalizedValue, 0.05) : 0;
+                const heightMultiplier = value > 0 ? Math.max(normalizedValue, 0.1) : 0;
                 
                 const barHeight = heightMultiplier * canvas.height * 0.9;
                 
@@ -394,7 +400,7 @@
                 ctx.fillStyle = `rgb(${r},${g},${b})`;
                 ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
                 
-                x += barWidth + 1;
+                x += barWidth + 2;
             }
         }
         
