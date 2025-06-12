@@ -377,9 +377,9 @@
                 // Apply slight exponential scaling for smoother response
                 value = Math.pow(value / 255, 1.5) * 255;
                 
-                // Add minimum height of 10% if there's any signal
+                // Always have minimum height of 10%, regardless of signal
                 const normalizedValue = value / 255;
-                const heightMultiplier = value > 0 ? Math.max(normalizedValue, 0.1) : 0;
+                const heightMultiplier = Math.max(normalizedValue, 0.1);
                 
                 const barHeight = heightMultiplier * canvas.height * 0.9;
                 
