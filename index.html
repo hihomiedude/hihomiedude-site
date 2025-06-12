@@ -121,6 +121,15 @@
             display: block;
         }
         
+        @keyframes catBop {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.05) translateY(-5px); }
+        }
+        
+        .cat-bop {
+            animation: catBop 0.448s ease-in-out infinite;
+        }
+        
         .center-box {
             background-color: #2d2d2d;
             padding: 40px;
@@ -310,6 +319,7 @@
         let analyser;
         let source;
         let dataArray;
+        const BPM = 134;
         
         // Remove autoplay, start with manual trigger
         muteBtn.textContent = '▶ play';
@@ -334,15 +344,15 @@
         
         function showMusicElements() {
             songInfo.style.display = 'block';
-            document.getElementById('catJam').classList.add('show');
-            document.getElementById('ratJam').classList.add('show');
+            document.getElementById('catJam').classList.add('show', 'cat-bop');
+            document.getElementById('ratJam').classList.add('show', 'cat-bop');
             drawVisualizer();
         }
         
         function hideMusicElements() {
             songInfo.style.display = 'none';
-            document.getElementById('catJam').classList.remove('show');
-            document.getElementById('ratJam').classList.remove('show');
+            document.getElementById('catJam').classList.remove('show', 'cat-bop');
+            document.getElementById('ratJam').classList.remove('show', 'cat-bop');
         }
         
         function drawVisualizer() {
