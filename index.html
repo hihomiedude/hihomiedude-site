@@ -77,6 +77,15 @@
             transition: left 0.1s linear;
         }
         
+        #visualizer {
+            display: block;
+            margin: 15px auto 5px;
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            max-width: 100%;
+            height: auto;
+        }
+        
         .main-container {
             display: flex;
             align-items: flex-start;
@@ -247,6 +256,7 @@
             <div class="progress-line"></div>
             <div class="progress-dot" id="progressDot"></div>
         </div>
+        <canvas id="visualizer" width="400" height="100"></canvas>
     </div>
     
     <div class="main-container">
@@ -293,14 +303,37 @@
         const songInfo = document.getElementById('songInfo');
         let audioStarted = false;
         
+        // Audio visualizer setup
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        let audioContext;
+        let analyser;
+        let source;
+        let dataArray;
+        
         // Remove autoplay, start with manual trigger
         muteBtn.textContent = '▶ play';
         muteBtn.style.backgroundColor = '#333';
+        
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                source = audioContext.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+            }
+        }
         
         function showMusicElements() {
             songInfo.style.display = 'block';
             document.getElementById('catJam').classList.add('show');
             document.getElementById('ratJam').classList.add('show');
+            drawVisualizer();
         }
         
         function hideMusicElements() {
@@ -309,9 +342,49 @@
             document.getElementById('ratJam').classList.remove('show');
         }
         
+        function drawVisualizer() {
+            if (!analyser || audio.paused) return;
+            
+            requestAnimationFrame(drawVisualizer);
+            
+            analyser.getByteFrequencyData(dataArray);
+            
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const barWidth = (canvas.width / dataArray.length) * 2.5;
+            let x = 0;
+            
+            for (let i = 0; i < dataArray.length; i++) {
+                const barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
+                
+                // Create gradient from green to orange to red
+                const percent = barHeight / (canvas.height * 0.8);
+                let r, g, b;
+                
+                if (percent < 0.5) {
+                    // Green to orange
+                    r = Math.floor(255 * (percent * 2));
+                    g = 255;
+                    b = 0;
+                } else {
+                    // Orange to red
+                    r = 255;
+                    g = Math.floor(255 * (2 - percent * 2));
+                    b = 0;
+                }
+                
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                
+                x += barWidth + 1;
+            }
+        }
+        
         muteBtn.addEventListener('click', function() {
             if (!audioStarted || audio.paused) {
                 // Play audio
+                initAudioContext();
                 audio.play().then(() => {
                     audioStarted = true;
                     muteBtn.textContent = '❚❚ pause';
