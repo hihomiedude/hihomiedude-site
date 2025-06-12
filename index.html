@@ -364,8 +364,8 @@
             ctx.fillStyle = '#1a1a1a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Use 64 bars with better frequency distribution
-            const barsToShow = 64;
+            // Use 48 bars (removing the rightmost 1/4)
+            const barsToShow = 48;
             const barWidth = canvas.width / barsToShow - 1;
             let x = 0;
             
@@ -373,8 +373,8 @@
                 // Sample more bins for higher frequencies
                 let binIndex = i;
                 if (i > 32) {
-                    // For bars 33-64, sample from higher frequency bins
-                    binIndex = Math.floor(i * 2);
+                    // For bars 33-48, sample from higher frequency bins
+                    binIndex = Math.floor(i * 1.5);
                 }
                 
                 let value = dataArray[binIndex];
