@@ -295,7 +295,7 @@
     </div>
     
     <audio id="bgMusic" loop>
-        <source src="clarity.mp3" type="audio/mpeg">
+        <source src="clarity.mp3#t=0.5" type="audio/mpeg">
     </audio>
     
     <script>
@@ -369,13 +369,15 @@
             for (let i = 0; i < barsToShow; i++) {
                 let value = dataArray[i];
                 
-                // Amplify bass frequencies more progressively
+                // Progressive frequency scaling - boost higher frequencies more
+                const freqScaling = 1 + (i / barsToShow) * 1.5; // Scale from 1x to 2.5x
+                value = value * freqScaling;
+                
+                // Additional bass boost for low frequencies
                 if (i < 8) {
-                    value = value * 1.5;  // Very low bass
+                    value = value * 1.2;  // Very low bass
                 } else if (i < 16) {
-                    value = value * 1.3;  // Mid bass
-                } else if (i < 24) {
-                    value = value * 1.1;  // Upper bass
+                    value = value * 1.1;  // Mid bass
                 }
                 
                 // Apply slight exponential scaling for smoother response
