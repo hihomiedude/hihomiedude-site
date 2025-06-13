@@ -412,8 +412,9 @@
             // Dynamic threshold based on recent activity
             const threshold = Math.max(averageFlux * FLUX_THRESHOLD, MIN_FLUX);
             
-            // Detect beat if flux exceeds threshold
-            if (flux > threshold && flux > MIN_FLUX) {
+            // Detect beat if flux exceeds threshold AND 3rd bar is over 50%
+            const thirdBarLevel = dataArray[2] / 255; // 3rd bar (index 2)
+            if (flux > threshold && flux > MIN_FLUX && thirdBarLevel > 0.5) {
                 flashBackground();
             }
             
