@@ -174,17 +174,51 @@
             margin-top: 20px;
         }
         
+        .play-section {
+            background-color: #2d2d2d;
+            border: 2px solid #555;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .play-prompt {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        
+        .play-button-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .play-arrow {
+            font-size: 18px;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        
         .mute-button {
             background-color: #333;
             color: white;
             border: 2px solid #555;
-            padding: 8px 15px;
+            padding: 12px 20px;
             font-family: 'Courier New', monospace;
             cursor: pointer;
+            font-size: 16px;
         }
         
         .mute-button:hover {
             background-color: #444;
+            border-color: #777;
+        }
+        
+        .audio-controls {
+            margin-top: 0;
         }
         
         @media (max-width: 768px) {
@@ -310,6 +344,15 @@
         </div>
         
         <div class="center-box">
+            <div class="play-section" id="playSection">
+                <div class="play-prompt">click to start music</div>
+                <div class="play-button-container">
+                    <span class="play-arrow" id="playArrow">-></span>
+                    <button class="mute-button" id="muteBtn">[play]</button>
+                    <span class="play-arrow">-></span>
+                </div>
+            </div>
+            
             <div class="link-item">
                 <a href="https://twitch.tv/hihomiedude" class="twitch-link" target="_blank">twitch</a>
             </div>
@@ -326,8 +369,8 @@
                 <a href="https://toneindicators.carrd.co/" class="tone-link" target="_blank">tone indicators</a>
             </div>
             
-            <div class="audio-controls">
-                <button class="mute-button" id="muteBtn">[mute]</button>
+            <div class="audio-controls" id="audioControls" style="display: none;">
+                <button class="mute-button" id="muteBtn2" style="display: none;">[pause]</button>
             </div>
         </div>
         
@@ -382,9 +425,29 @@
         let warningInterval = null;
         let warningShown = false;
         
-        // Remove autoplay, start with manual trigger
-        muteBtn.textContent = '[play]';
-        muteBtn.style.backgroundColor = '#333';
+        // Play button arrow animation
+        let arrowInterval = null;
+        
+        // Start arrow animation for play button
+        function startArrowAnimation() {
+            const playArrow = document.getElementById('playArrow');
+            let visible = true;
+            
+            arrowInterval = setInterval(() => {
+                playArrow.textContent = visible ? '->' : '  ';
+                visible = !visible;
+            }, 800);
+        }
+        
+        function stopArrowAnimation() {
+            if (arrowInterval) {
+                clearInterval(arrowInterval);
+                arrowInterval = null;
+            }
+        }
+        
+        // Start the arrow animation on page load
+        startArrowAnimation();
         
         function initAudioContext() {
             if (!audioContext) {
@@ -605,6 +668,11 @@
                 // Start playing immediately
                 audio.play().then(() => {
                     audioStarted = true;
+                    
+                    // Hide play section and stop arrow animation
+                    document.getElementById('playSection').style.display = 'none';
+                    stopArrowAnimation();
+                    
                     muteBtn.textContent = '[pause]';
                     muteBtn.style.backgroundColor = '#333';
                     
@@ -625,6 +693,10 @@
                 muteBtn.textContent = '[play]';
                 hideMusicElements();
                 stopSeizureWarning(); // Stop warning when pausing
+                
+                // Show play section again and restart arrow animation
+                document.getElementById('playSection').style.display = 'block';
+                startArrowAnimation();
             }
         });
         
