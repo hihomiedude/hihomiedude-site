@@ -263,7 +263,7 @@
         }
         
         .seizure-warning {
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -273,10 +273,15 @@
             color: #ff0000;
             text-align: center;
             z-index: 1000;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.9);
             padding: 20px;
             border: 3px solid #ff0000;
             display: none;
+            pointer-events: none;
+        }
+        
+        .song-info {
+            position: relative;
         }
     </style>
 </head>
@@ -293,6 +298,9 @@
             <div class="progress-dot" id="progressDot"></div>
         </div>
         <canvas id="visualizer" width="400" height="100"></canvas>
+        <div class="seizure-warning" id="seizureWarning">
+            SEIZURE WARNING (10)
+        </div>
     </div>
     
     <div class="main-container">
@@ -337,10 +345,6 @@
         this is a hihomiedude production
     </div>
     
-    <div class="seizure-warning" id="seizureWarning">
-        SEIZURE WARNING (10)
-    </div>
-    
     <script>
         const audio = document.getElementById('bgMusic');
         const muteBtn = document.getElementById('muteBtn');
@@ -366,10 +370,10 @@
         
         // Time-based flash gating (start, end times in seconds)
         const FLASH_TIME_RANGES = [
-            { start: 29, end: 44 },   // 0:29 - 0:44
-            { start: 58, end: 72 },   // 0:58 - 1:12
-            { start: 100, end: 117 }, // 1:40 - 1:57
-            { start: 129, end: 999 }  // 2:09 - end of song
+            { start: 29.5, end: 44 },   // 0:29.5 - 0:44
+            { start: 58, end: 72 },     // 0:58 - 1:12
+            { start: 100, end: 117 },   // 1:40 - 1:57
+            { start: 129, end: 999 }    // 2:09 - end of song
         ];
         
         // Seizure warning countdown
@@ -447,8 +451,17 @@
                 } else {
                     seizureWarning.style.display = 'none';
                     clearInterval(warningInterval);
+                    warningInterval = null;
                 }
             }, 1000);
+        }
+        
+        function stopSeizureWarning() {
+            if (warningInterval) {
+                clearInterval(warningInterval);
+                warningInterval = null;
+                document.getElementById('seizureWarning').style.display = 'none';
+            }
         }
         
         function checkSeizureWarning() {
@@ -611,6 +624,7 @@
                 audio.pause();
                 muteBtn.textContent = '[play]';
                 hideMusicElements();
+                stopSeizureWarning(); // Stop warning when pausing
             }
         });
         
