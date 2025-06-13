@@ -1,2 +1,1 @@
-# hihomiedude
-## https://www.hihomiedude.com
+[hihomiedude](https://www.hihomiedude.com)
