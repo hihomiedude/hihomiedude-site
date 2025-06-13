@@ -193,17 +193,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-        }
-        
-        .play-arrow {
-            position: absolute;
-            left: -30px;
-            font-size: 18px;
-            color: #ffffff;
-            font-weight: bold;
-            width: 24px;
-            text-align: center;
         }
         
         .mute-button {
@@ -219,6 +208,28 @@
         .mute-button:hover {
             background-color: #444;
             border-color: #777;
+        }
+        
+        .rainbow-text {
+            background: linear-gradient(90deg, 
+                #ff0000, #ff8000, #ffff00, #80ff00, 
+                #00ff00, #00ff80, #00ffff, #0080ff, 
+                #0000ff, #8000ff, #ff00ff, #ff0080, 
+                #ff0000);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow-cycle 3s linear infinite;
+        }
+        
+        @keyframes rainbow-cycle {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
+            }
         }
         
         .audio-controls {
@@ -350,8 +361,7 @@
         <div class="center-box">
             <div class="play-section" id="playSection">
                 <div class="play-button-container">
-                    <span class="play-arrow" id="playArrow">-></span>
-                    <button class="mute-button" id="muteBtn">[play]</button>
+                    <button class="mute-button rainbow-text" id="muteBtn">[play]</button>
                 </div>
             </div>
             
@@ -427,29 +437,6 @@
         let warningInterval = null;
         let warningShown = false;
         
-        // Play button arrow animation
-        let arrowInterval = null;
-        
-        // Start arrow animation for play button
-        function startArrowAnimation() {
-            const playArrow = document.getElementById('playArrow');
-            let visible = true;
-            
-            arrowInterval = setInterval(() => {
-                playArrow.textContent = visible ? '->' : '  ';
-                visible = !visible;
-            }, 800);
-        }
-        
-        function stopArrowAnimation() {
-            if (arrowInterval) {
-                clearInterval(arrowInterval);
-                arrowInterval = null;
-            }
-        }
-        
-        // Start the arrow animation on page load
-        startArrowAnimation();
         
         function initAudioContext() {
             if (!audioContext) {
@@ -671,12 +658,12 @@
                 audio.play().then(() => {
                     audioStarted = true;
                     
-                    // Hide play section and stop arrow animation
+                    // Hide play section
                     document.getElementById('playSection').style.display = 'none';
-                    stopArrowAnimation();
                     
                     muteBtn.textContent = '[pause]';
                     muteBtn.style.backgroundColor = '#333';
+                    muteBtn.classList.remove('rainbow-text');
                     
                     // Force audio context to resume and start visualizer immediately
                     if (audioContext.state === 'suspended') {
@@ -696,9 +683,9 @@
                 hideMusicElements();
                 stopSeizureWarning(); // Stop warning when pausing
                 
-                // Show play section again and restart arrow animation
+                // Show play section again and restore rainbow effect
                 document.getElementById('playSection').style.display = 'block';
-                startArrowAnimation();
+                muteBtn.classList.add('rainbow-text');
             }
         });
         
