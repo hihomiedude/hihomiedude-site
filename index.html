@@ -319,12 +319,13 @@
         
         // Bass detection variables
         let lastFlashTime = 0;
-        const FLASH_COOLDOWN = 50; // 50ms debounce - very short
-        let previousFrequencyData = null;
-        let energyHistory = [];
-        const ENERGY_HISTORY_SIZE = 43; // ~1 second at 60fps
-        const BASS_BINS = 4; // Focus on first 4 frequency bins for bass
-        const ENERGY_MULTIPLIER = 1.5; // How much above average energy triggers flash
+        const FLASH_COOLDOWN = 20; // 20ms debounce - ultra short for rapid hits
+        let previousSpectrum = null;
+        let fluxHistory = [];
+        const FLUX_HISTORY_SIZE = 30; // ~0.5 seconds of history
+        const BASS_BINS = 6; // Monitor more bins for better detection
+        const FLUX_THRESHOLD = 1.8; // How much above average flux triggers flash
+        const MIN_FLUX = 0.15; // Minimum flux to consider (filters out noise)
         
         // Remove autoplay, start with manual trigger
         muteBtn.textContent = '[play]';
@@ -384,46 +385,62 @@
         }
         
         function detectBassHit(dataArray) {
-            // Calculate current bass energy
-            let currentBassEnergy = 0;
-            for (let i = 0; i < BASS_BINS; i++) {
-                currentBassEnergy += Math.pow(dataArray[i] / 255, 2);
-            }
-            currentBassEnergy = currentBassEnergy / BASS_BINS;
-            
-            // Add to history
-            energyHistory.push(currentBassEnergy);
-            if (energyHistory.length > ENERGY_HISTORY_SIZE) {
-                energyHistory.shift();
-            }
-            
-            // Need enough history to calculate average
-            if (energyHistory.length < 10) {
+            if (!previousSpectrum) {
+                previousSpectrum = new Float32Array(dataArray.length);
                 return;
             }
             
-            // Calculate average energy
-            const averageEnergy = energyHistory.reduce((a, b) => a + b, 0) / energyHistory.length;
-            
-            // Detect if current energy significantly exceeds average
-            if (currentBassEnergy > averageEnergy * ENERGY_MULTIPLIER && currentBassEnergy > 0.1) {
-                // Also check for sudden rise (beat transient)
-                if (previousFrequencyData) {
-                    let previousBassEnergy = 0;
-                    for (let i = 0; i < BASS_BINS; i++) {
-                        previousBassEnergy += Math.pow(previousFrequencyData[i] / 255, 2);
-                    }
-                    previousBassEnergy = previousBassEnergy / BASS_BINS;
-                    
-                    // Only flash if there's a significant rise
-                    if (currentBassEnergy > previousBassEnergy * 1.3) {
-                        flashBackground();
-                    }
+            // Calculate spectral flux (sum of positive differences)
+            let flux = 0;
+            for (let i = 0; i < BASS_BINS; i++) {
+                const current = dataArray[i] / 255;
+                const previous = previousSpectrum[i];
+                const diff = current - previous;
+                
+                // Only count positive differences (increases in energy)
+                if (diff > 0) {
+                    flux += diff;
                 }
             }
             
-            // Store current data for next frame
-            previousFrequencyData = new Uint8Array(dataArray);
+            // Also check mid frequencies for kick drum "click"
+            for (let i = 10; i < 20; i++) {
+                const current = dataArray[i] / 255;
+                const previous = previousSpectrum[i];
+                const diff = current - previous;
+                if (diff > 0) {
+                    flux += diff * 0.3; // Weight mid frequencies less
+                }
+            }
+            
+            // Store flux in history
+            fluxHistory.push(flux);
+            if (fluxHistory.length > FLUX_HISTORY_SIZE) {
+                fluxHistory.shift();
+            }
+            
+            // Need enough history
+            if (fluxHistory.length < 10) {
+                previousSpectrum = new Float32Array(dataArray).map(v => v / 255);
+                return;
+            }
+            
+            // Calculate average flux
+            const averageFlux = fluxHistory.reduce((a, b) => a + b, 0) / fluxHistory.length;
+            
+            // Dynamic threshold based on recent activity
+            const threshold = Math.max(averageFlux * FLUX_THRESHOLD, MIN_FLUX);
+            
+            // Detect beat if flux exceeds threshold
+            if (flux > threshold && flux > MIN_FLUX) {
+                const currentTime = Date.now();
+                if (currentTime - lastFlashTime >= FLASH_COOLDOWN) {
+                    flashBackground();
+                }
+            }
+            
+            // Store current spectrum for next frame
+            previousSpectrum = new Float32Array(dataArray).map(v => v / 255);
         }
         
         function drawVisualizer() {
