@@ -106,13 +106,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 30px;
             overflow: visible;
-            transition: gap 0.25s ease-out;
-        }
-        
-        .side-image.thump-container {
-            gap: 25px;
         }
         
         .lulw-img {
@@ -235,23 +230,42 @@
             }
         }
         
-        @keyframes bass-thump {
+        @keyframes bass-thump-up {
             0% {
-                transform: scale(1);
+                transform: scale(1) translateY(0);
                 filter: brightness(1);
             }
             50% {
-                transform: scale(1.6);
+                transform: scale(1.6) translateY(-15px);
                 filter: brightness(1.15);
             }
             100% {
-                transform: scale(1);
+                transform: scale(1) translateY(0);
                 filter: brightness(1);
             }
         }
         
-        .thump {
-            animation: bass-thump 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        @keyframes bass-thump-down {
+            0% {
+                transform: scale(1) translateY(0);
+                filter: brightness(1);
+            }
+            50% {
+                transform: scale(1.6) translateY(15px);
+                filter: brightness(1.15);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                filter: brightness(1);
+            }
+        }
+        
+        .thump-up {
+            animation: bass-thump-up 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .thump-down {
+            animation: bass-thump-down 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         
         .audio-controls {
@@ -523,26 +537,20 @@
         
         function thumpImages() {
             const images = document.querySelectorAll('.lulw-img, .dancing-img');
-            const containers = document.querySelectorAll('.side-image');
             
-            // Add thump class to containers for spacing
-            containers.forEach(container => {
-                container.classList.add('thump-container');
-            });
-            
-            images.forEach(img => {
-                img.classList.remove('thump');
+            images.forEach((img, index) => {
+                // Remove any existing thump classes
+                img.classList.remove('thump-up', 'thump-down');
                 // Force reflow to restart animation
                 img.offsetHeight;
-                img.classList.add('thump');
+                
+                // Alternate direction: even indices go up, odd go down
+                if (index % 2 === 0) {
+                    img.classList.add('thump-up');
+                } else {
+                    img.classList.add('thump-down');
+                }
             });
-            
-            // Remove container classes after animation
-            setTimeout(() => {
-                containers.forEach(container => {
-                    container.classList.remove('thump-container');
-                });
-            }, 250);
         }
         
         function isFlashingAllowed() {
