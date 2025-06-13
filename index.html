@@ -333,7 +333,7 @@
         </div>
         <canvas id="visualizer" width="400" height="100"></canvas>
         <div class="seizure-warning" id="seizureWarning">
-            SEIZURE WARNING (10)
+            SEIZURE WARNING (5)
         </div>
     </div>
     
@@ -421,7 +421,7 @@
         
         // Seizure warning countdown
         const FIRST_FLASH_TIME = FLASH_TIME_RANGES[0].start;
-        const WARNING_START_TIME = FIRST_FLASH_TIME - 10; // 10 seconds before
+        const WARNING_START_TIME = FIRST_FLASH_TIME - 5; // 5 seconds before
         let warningInterval = null;
         let warningShown = false;
         
@@ -503,7 +503,7 @@
         function startSeizureWarning() {
             const seizureWarning = document.getElementById('seizureWarning');
             seizureWarning.style.display = 'block';
-            let countdown = 10;
+            let countdown = 5;
             
             seizureWarning.textContent = `SEIZURE WARNING (${countdown})`;
             
