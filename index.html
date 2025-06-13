@@ -318,14 +318,12 @@
         const BPM = 134;
         
         // Bass detection variables
-        let lastFlashTime = 0;
-        const FLASH_COOLDOWN = 20; // 20ms debounce - ultra short for rapid hits
         let previousSpectrum = null;
         let fluxHistory = [];
         const FLUX_HISTORY_SIZE = 30; // ~0.5 seconds of history
-        const BASS_BINS = 6; // Monitor more bins for better detection
-        const FLUX_THRESHOLD = 1.8; // How much above average flux triggers flash
-        const MIN_FLUX = 0.15; // Minimum flux to consider (filters out noise)
+        const BASS_BINS = 4; // Focus only on deep bass frequencies
+        const FLUX_THRESHOLD = 2.0; // How much above average flux triggers flash
+        const MIN_FLUX = 0.2; // Minimum flux to consider (filters out noise)
         
         // Remove autoplay, start with manual trigger
         muteBtn.textContent = '[play]';
@@ -366,22 +364,13 @@
         }
         
         function flashBackground() {
-            const currentTime = Date.now();
-            
-            // Check if enough time has passed since last flash
-            if (currentTime - lastFlashTime < FLASH_COOLDOWN) {
-                return;
-            }
-            
-            // Flash the background white
-            document.body.style.backgroundColor = '#ffffff';
+            // Flash the background light gray
+            document.body.style.backgroundColor = '#d0d0d0';
             
             // Fade back to original color
             setTimeout(() => {
                 document.body.style.backgroundColor = '#1a1a1a';
             }, 100);
-            
-            lastFlashTime = currentTime;
         }
         
         function detectBassHit(dataArray) {
@@ -403,15 +392,7 @@
                 }
             }
             
-            // Also check mid frequencies for kick drum "click"
-            for (let i = 10; i < 20; i++) {
-                const current = dataArray[i] / 255;
-                const previous = previousSpectrum[i];
-                const diff = current - previous;
-                if (diff > 0) {
-                    flux += diff * 0.3; // Weight mid frequencies less
-                }
-            }
+            // Remove mid frequency detection - focus only on bass
             
             // Store flux in history
             fluxHistory.push(flux);
@@ -433,10 +414,7 @@
             
             // Detect beat if flux exceeds threshold
             if (flux > threshold && flux > MIN_FLUX) {
-                const currentTime = Date.now();
-                if (currentTime - lastFlashTime >= FLASH_COOLDOWN) {
-                    flashBackground();
-                }
+                flashBackground();
             }
             
             // Store current spectrum for next frame
