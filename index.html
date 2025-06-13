@@ -373,6 +373,38 @@
         .song-info {
             position: relative;
         }
+        
+        .flying-lulw {
+            position: fixed;
+            top: 50%;
+            left: -300px;
+            width: 250px;
+            height: 250px;
+            z-index: 100;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: none;
+        }
+        
+        @keyframes fly-across {
+            0% {
+                left: -300px;
+                opacity: 1;
+                transform: translateY(-50%) rotate(-10deg);
+            }
+            50% {
+                transform: translateY(-50%) rotate(5deg);
+            }
+            100% {
+                left: calc(100vw + 100px);
+                opacity: 1;
+                transform: translateY(-50%) rotate(-5deg);
+            }
+        }
+        
+        .flying-lulw.active {
+            animation: fly-across 6s ease-in-out;
+        }
     </style>
 </head>
 <body>
@@ -441,6 +473,8 @@
         this is a hihomiedude production
     </div>
     
+    <img src="assets/images/LULW.png" alt="Flying LULW" class="flying-lulw" id="flyingLulw">
+    
     <script>
         const audio = document.getElementById('bgMusic');
         const muteBtn = document.getElementById('muteBtn');
@@ -477,6 +511,10 @@
         const WARNING_START_TIME = FIRST_FLASH_TIME - 5; // 5 seconds before
         let warningInterval = null;
         let warningShown = false;
+        
+        // Flying LULW timing
+        const FLYING_LULW_TIME = FLASH_TIME_RANGES[0].end + 1; // 1 second after first flash period ends
+        let flyingLulwShown = false;
         
         
         function initAudioContext() {
@@ -612,6 +650,27 @@
             }
         }
         
+        function triggerFlyingLulw() {
+            const flyingLulw = document.getElementById('flyingLulw');
+            flyingLulw.classList.remove('active');
+            // Force reflow to restart animation
+            flyingLulw.offsetHeight;
+            flyingLulw.classList.add('active');
+            
+            // Reset for potential future triggers (if song loops)
+            setTimeout(() => {
+                flyingLulw.classList.remove('active');
+            }, 6000);
+        }
+        
+        function checkFlyingLulw() {
+            const currentTime = audio.currentTime;
+            if (!flyingLulwShown && currentTime >= FLYING_LULW_TIME) {
+                triggerFlyingLulw();
+                flyingLulwShown = true;
+            }
+        }
+        
         function detectBassHit(dataArray) {
             if (!previousSpectrum) {
                 previousSpectrum = new Float32Array(dataArray.length);
@@ -679,6 +738,9 @@
             
             // Check for seizure warning
             checkSeizureWarning();
+            
+            // Check for flying LULW trigger
+            checkFlyingLulw();
             
             // Detect bass hits for background flash
             detectBassHit(dataArray);
