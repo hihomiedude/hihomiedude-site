@@ -319,9 +319,10 @@
         
         // Bass detection variables
         let lastFlashTime = 0;
-        const FLASH_COOLDOWN = 200; // 0.2 seconds in milliseconds
-        let previousBassAverage = 0;
-        const BASS_THRESHOLD = 0.7; // Threshold for detecting bass hit (0-1)
+        const FLASH_COOLDOWN = 150; // 0.15 seconds in milliseconds
+        let previousBarsState = [];
+        const JUMP_THRESHOLD = 0.25; // How much the bars need to jump (0-1) - lowered for more sensitivity
+        const BARS_TO_CHECK = 7; // Check leftmost 7 bars
         
         // Remove autoplay, start with manual trigger
         muteBtn.textContent = '[play]';
@@ -380,22 +381,41 @@
             lastFlashTime = currentTime;
         }
         
-        function detectBassHit(dataArray) {
-            // Monitor first 3 frequency bins for bass
-            let bassSum = 0;
-            for (let i = 0; i < 3; i++) {
-                bassSum += dataArray[i];
+        function detectBarsJump(dataArray) {
+            // Get current state of leftmost bars
+            const currentBarsState = [];
+            for (let i = 0; i < BARS_TO_CHECK; i++) {
+                currentBarsState[i] = dataArray[i] / 255; // Normalize to 0-1
             }
             
-            // Calculate average bass level (normalized to 0-1)
-            const bassAverage = bassSum / (3 * 255);
+            // Skip if we don't have previous state yet
+            if (previousBarsState.length === 0) {
+                previousBarsState = currentBarsState;
+                return;
+            }
             
-            // Detect a significant jump in bass (bass hit)
-            if (bassAverage > BASS_THRESHOLD && bassAverage > previousBassAverage * 1.3) {
+            // Count how many bars jumped significantly
+            let jumpedBars = 0;
+            for (let i = 0; i < BARS_TO_CHECK; i++) {
+                const jump = currentBarsState[i] - previousBarsState[i];
+                if (jump > JUMP_THRESHOLD) {
+                    jumpedBars++;
+                }
+            }
+            
+            // Flash if majority of bars jumped (at least 4 out of 7)
+            // Also consider average jump magnitude for better detection
+            let totalJump = 0;
+            for (let i = 0; i < BARS_TO_CHECK; i++) {
+                totalJump += Math.max(0, currentBarsState[i] - previousBarsState[i]);
+            }
+            const averageJump = totalJump / BARS_TO_CHECK;
+            
+            if (jumpedBars >= 4 || (jumpedBars >= 3 && averageJump > 0.3)) {
                 flashBackground();
             }
             
-            previousBassAverage = bassAverage;
+            previousBarsState = currentBarsState;
         }
         
         function drawVisualizer() {
@@ -405,8 +425,8 @@
             
             analyser.getByteFrequencyData(dataArray);
             
-            // Detect bass hits for background flash
-            detectBassHit(dataArray);
+            // Detect bars jump for background flash
+            detectBarsJump(dataArray);
             
             ctx.fillStyle = '#1a1a1a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
