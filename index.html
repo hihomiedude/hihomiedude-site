@@ -339,6 +339,14 @@
         const FLUX_THRESHOLD = 1.6; // Lower threshold for more sensitivity
         const MIN_FLUX = 0.15; // Lower minimum flux for rapid hits
         
+        // Time-based flash gating (start, end times in seconds)
+        const FLASH_TIME_RANGES = [
+            { start: 29, end: 44 },   // 0:29 - 0:44
+            { start: 58, end: 72 },   // 0:58 - 1:12
+            { start: 100, end: 117 }, // 1:40 - 1:57
+            { start: 129, end: 999 }  // 2:09 - end of song
+        ];
+        
         // Remove autoplay, start with manual trigger
         muteBtn.textContent = '[play]';
         muteBtn.style.backgroundColor = '#333';
@@ -385,6 +393,13 @@
             setTimeout(() => {
                 document.body.style.backgroundColor = '#1a1a1a';
             }, 100);
+        }
+        
+        function isFlashingAllowed() {
+            const currentTime = audio.currentTime;
+            return FLASH_TIME_RANGES.some(range => 
+                currentTime >= range.start && currentTime <= range.end
+            );
         }
         
         function detectBassHit(dataArray) {
@@ -437,7 +452,7 @@
             }
             const avgBassLevel = bassSum / BASS_BARS_TO_CHECK;
             
-            if (flux > threshold && flux > MIN_FLUX && avgBassLevel > 0.45) {
+            if (flux > threshold && flux > MIN_FLUX && avgBassLevel > 0.45 && isFlashingAllowed()) {
                 flashBackground();
             }
             
