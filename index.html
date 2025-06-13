@@ -412,9 +412,15 @@
             // Dynamic threshold based on recent activity
             const threshold = Math.max(averageFlux * FLUX_THRESHOLD, MIN_FLUX);
             
-            // Detect beat if flux exceeds threshold AND 3rd bar is over 50%
-            const thirdBarLevel = dataArray[2] / 255; // 3rd bar (index 2)
-            if (flux > threshold && flux > MIN_FLUX && thirdBarLevel > 0.5) {
+            // Detect beat if flux exceeds threshold AND leftmost bars are pumping
+            let bassSum = 0;
+            const BASS_BARS_TO_CHECK = 5;
+            for (let i = 0; i < BASS_BARS_TO_CHECK; i++) {
+                bassSum += dataArray[i] / 255;
+            }
+            const avgBassLevel = bassSum / BASS_BARS_TO_CHECK;
+            
+            if (flux > threshold && flux > MIN_FLUX && avgBassLevel > 0.75) {
                 flashBackground();
             }
             
