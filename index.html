@@ -251,11 +251,32 @@
         .footer {
             position: fixed;
             bottom: 10px;
-            width: 100%;
+            left: 50%;
+            transform: translateX(-50%);
             text-align: center;
             font-size: 10px;
             color: #666;
             font-family: 'Courier New', monospace;
+            border: 1px solid #444;
+            padding: 5px 10px;
+            background-color: #2d2d2d;
+        }
+        
+        .seizure-warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Courier New', monospace;
+            font-size: 48px;
+            font-weight: bold;
+            color: #ff0000;
+            text-align: center;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border: 3px solid #ff0000;
+            display: none;
         }
     </style>
 </head>
@@ -316,6 +337,10 @@
         this is a hihomiedude production
     </div>
     
+    <div class="seizure-warning" id="seizureWarning">
+        SEIZURE WARNING (10)
+    </div>
+    
     <script>
         const audio = document.getElementById('bgMusic');
         const muteBtn = document.getElementById('muteBtn');
@@ -346,6 +371,12 @@
             { start: 100, end: 117 }, // 1:40 - 1:57
             { start: 129, end: 999 }  // 2:09 - end of song
         ];
+        
+        // Seizure warning countdown
+        const FIRST_FLASH_TIME = FLASH_TIME_RANGES[0].start;
+        const WARNING_START_TIME = FIRST_FLASH_TIME - 10; // 10 seconds before
+        let warningInterval = null;
+        let warningShown = false;
         
         // Remove autoplay, start with manual trigger
         muteBtn.textContent = '[play]';
@@ -400,6 +431,32 @@
             return FLASH_TIME_RANGES.some(range => 
                 currentTime >= range.start && currentTime <= range.end
             );
+        }
+        
+        function startSeizureWarning() {
+            const seizureWarning = document.getElementById('seizureWarning');
+            seizureWarning.style.display = 'block';
+            let countdown = 10;
+            
+            seizureWarning.textContent = `SEIZURE WARNING (${countdown})`;
+            
+            warningInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    seizureWarning.textContent = `SEIZURE WARNING (${countdown})`;
+                } else {
+                    seizureWarning.style.display = 'none';
+                    clearInterval(warningInterval);
+                }
+            }, 1000);
+        }
+        
+        function checkSeizureWarning() {
+            const currentTime = audio.currentTime;
+            if (!warningShown && currentTime >= WARNING_START_TIME && currentTime < FIRST_FLASH_TIME) {
+                startSeizureWarning();
+                warningShown = true;
+            }
         }
         
         function detectBassHit(dataArray) {
@@ -466,6 +523,9 @@
             requestAnimationFrame(drawVisualizer);
             
             analyser.getByteFrequencyData(dataArray);
+            
+            // Check for seizure warning
+            checkSeizureWarning();
             
             // Detect bass hits for background flash
             detectBassHit(dataArray);
