@@ -194,18 +194,32 @@
         }
         
         .mute-button {
-            background-color: #333;
+            background-color: #2d2d2d;
             color: white;
-            border: 2px solid #555;
+            border: 2px solid #444;
             padding: 12px 20px;
             font-family: 'Courier New', monospace;
             cursor: pointer;
             font-size: 16px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+            position: relative;
         }
         
         .mute-button:hover {
-            background-color: #444;
-            border-color: #777;
+            background-color: #333;
+            border-color: #666;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .mute-button::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.1) 100%);
+            pointer-events: none;
         }
         
         .rainbow-text {
@@ -411,16 +425,16 @@
             0% {
                 left: -150vw;
                 opacity: 0.7;
-                transform: translateY(-50%) rotate(-10deg);
+                transform: translateY(-50%);
             }
             50% {
                 opacity: 0.8;
-                transform: translateY(-50%) rotate(5deg);
+                transform: translateY(-50%);
             }
             100% {
                 left: 150vw;
                 opacity: 0.7;
-                transform: translateY(-50%) rotate(-5deg);
+                transform: translateY(-50%);
             }
         }
         
@@ -473,6 +487,10 @@
                 </div>
             </div>
             
+            <div class="audio-controls" id="audioControls" style="display: none;">
+                <button class="mute-button" id="muteBtn2">[pause]</button>
+            </div>
+            
             <div class="link-item">
                 <a href="https://twitch.tv/hihomiedude" class="twitch-link" target="_blank">twitch</a>
             </div>
@@ -487,10 +505,6 @@
             
             <div class="link-item">
                 <a href="https://toneindicators.carrd.co/" class="tone-link" target="_blank">tone indicators</a>
-            </div>
-            
-            <div class="audio-controls" id="audioControls" style="display: none;">
-                <button class="mute-button" id="muteBtn2">[pause]</button>
             </div>
         </div>
         
