@@ -453,7 +453,7 @@
         <canvas id="visualizer" width="400" height="100"></canvas>
         <div class="seizure-warning" id="seizureWarning">
             <div id="seizureWarningText">SEIZURE WARNING (5)</div>
-            <div class="seizure-warning-small">
+            <div class="seizure-warning-small" id="seizureWarningSmall" style="display: none;">
                 <span>hihomiedude</span>
                 <img src="assets/images/LULW.png" alt="LULW" class="seizure-warning-lulw">
             </div>
@@ -490,7 +490,7 @@
             </div>
             
             <div class="audio-controls" id="audioControls" style="display: none;">
-                <button class="mute-button" id="muteBtn2" style="display: none;">[pause]</button>
+                <button class="mute-button" id="muteBtn2">[pause]</button>
             </div>
         </div>
         
@@ -652,6 +652,13 @@
                 countdown--;
                 if (countdown > 0) {
                     seizureWarningText.textContent = `SEIZURE WARNING (${countdown})`;
+                    // Show hihomiedude LULW only on countdown 1
+                    const seizureWarningSmall = document.getElementById('seizureWarningSmall');
+                    if (countdown === 1) {
+                        seizureWarningSmall.style.display = 'flex';
+                    } else {
+                        seizureWarningSmall.style.display = 'none';
+                    }
                 } else {
                     seizureWarning.style.display = 'none';
                     seizureWarning.removeEventListener('click', pauseMusicFromWarning);
@@ -854,8 +861,9 @@
                 audio.play().then(() => {
                     audioStarted = true;
                     
-                    // Hide play section
+                    // Hide play section and show pause button
                     document.getElementById('playSection').style.display = 'none';
+                    document.getElementById('audioControls').style.display = 'block';
                     
                     muteBtn.textContent = '[pause]';
                     muteBtn.style.backgroundColor = '#333';
@@ -879,8 +887,9 @@
                 hideMusicElements();
                 stopSeizureWarning(); // Stop warning when pausing
                 
-                // Show play section again and restore rainbow effect
+                // Show play section again and hide pause button
                 document.getElementById('playSection').style.display = 'block';
+                document.getElementById('audioControls').style.display = 'none';
                 muteBtn.classList.add('rainbow-text');
             }
         });
@@ -897,6 +906,22 @@
         audio.addEventListener('ended', function() {
             hideMusicElements();
             muteBtn.textContent = '[play]';
+            document.getElementById('playSection').style.display = 'block';
+            document.getElementById('audioControls').style.display = 'none';
+            muteBtn.classList.add('rainbow-text');
+        });
+        
+        // Second pause button functionality
+        document.getElementById('muteBtn2').addEventListener('click', function() {
+            audio.pause();
+            muteBtn.textContent = '[play]';
+            hideMusicElements();
+            stopSeizureWarning();
+            
+            // Show play section again and hide pause button
+            document.getElementById('playSection').style.display = 'block';
+            document.getElementById('audioControls').style.display = 'none';
+            muteBtn.classList.add('rainbow-text');
         });
     </script>
 </body>
