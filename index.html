@@ -393,6 +393,10 @@
                 // Apply slight exponential scaling for smoother response
                 value = Math.pow(value / 255, 1.5) * 255;
                 
+                // Linear sensitivity scaling - higher frequencies are more sensitive
+                const sensitivityScale = 1 + (i / barsToShow) * 2; // Scale from 1x to 3x
+                value = Math.min(value * sensitivityScale, 255);
+                
                 // Always have minimum height of 10%, regardless of signal
                 const normalizedValue = value / 255;
                 const heightMultiplier = Math.max(normalizedValue, 0.1);
