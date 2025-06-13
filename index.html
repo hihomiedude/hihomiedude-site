@@ -229,6 +229,22 @@
             }
         }
         
+        @keyframes bass-thump {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .thump {
+            animation: bass-thump 0.2s ease-out;
+        }
+        
         .audio-controls {
             margin-top: 0;
         }
@@ -306,6 +322,7 @@
             border: 1px solid #444;
             padding: 5px 10px;
             background-color: #2d2d2d;
+            z-index: -1;
         }
         
         .seizure-warning {
@@ -473,10 +490,23 @@
             // Flash the background light gray
             document.body.style.backgroundColor = '#d0d0d0';
             
+            // Thump all images
+            thumpImages();
+            
             // Fade back to original color
             setTimeout(() => {
                 document.body.style.backgroundColor = '#1a1a1a';
             }, 100);
+        }
+        
+        function thumpImages() {
+            const images = document.querySelectorAll('.lulw-img, .dancing-img');
+            images.forEach(img => {
+                img.classList.remove('thump');
+                // Force reflow to restart animation
+                img.offsetHeight;
+                img.classList.add('thump');
+            });
         }
         
         function isFlashingAllowed() {
