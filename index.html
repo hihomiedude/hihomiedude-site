@@ -759,12 +759,14 @@
             
             // Calculate average flux and recent flux for rapid succession detection
             const averageFlux = fluxHistory.reduce((a, b) => a + b, 0) / fluxHistory.length;
-            const recentFlux = fluxHistory.slice(-5).reduce((a, b) => a + b, 0) / Math.min(5, fluxHistory.length);
+            const recentFlux = fluxHistory.slice(-3).reduce((a, b) => a + b, 0) / Math.min(3, fluxHistory.length);
+            const immediateFlux = fluxHistory.slice(-2).reduce((a, b) => a + b, 0) / Math.min(2, fluxHistory.length);
             
-            // Use lower of the two thresholds to catch rapid hits
+            // Use adaptive thresholds - much more sensitive for consecutive hits
             const baseThreshold = averageFlux * FLUX_THRESHOLD;
-            const rapidThreshold = recentFlux * 1.2; // Much more sensitive for rapid succession
-            const threshold = Math.max(Math.min(baseThreshold, rapidThreshold), MIN_FLUX);
+            const rapidThreshold = recentFlux * 1.1; // More sensitive for recent hits
+            const immediateThreshold = immediateFlux * 0.9; // Very sensitive for immediate succession
+            const threshold = Math.max(Math.min(baseThreshold, Math.min(rapidThreshold, immediateThreshold)), MIN_FLUX);
             
             // Detect beat if flux exceeds threshold AND bars 2-5 are pumping
             let bassSum = 0;
