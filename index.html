@@ -107,6 +107,12 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
+            overflow: visible;
+            transition: gap 0.25s ease-out;
+        }
+        
+        .side-image.thump-container {
+            gap: 25px;
         }
         
         .lulw-img {
@@ -235,7 +241,7 @@
                 filter: brightness(1);
             }
             50% {
-                transform: scale(1.35);
+                transform: scale(1.6);
                 filter: brightness(1.15);
             }
             100% {
@@ -517,12 +523,26 @@
         
         function thumpImages() {
             const images = document.querySelectorAll('.lulw-img, .dancing-img');
+            const containers = document.querySelectorAll('.side-image');
+            
+            // Add thump class to containers for spacing
+            containers.forEach(container => {
+                container.classList.add('thump-container');
+            });
+            
             images.forEach(img => {
                 img.classList.remove('thump');
                 // Force reflow to restart animation
                 img.offsetHeight;
                 img.classList.add('thump');
             });
+            
+            // Remove container classes after animation
+            setTimeout(() => {
+                containers.forEach(container => {
+                    container.classList.remove('thump-container');
+                });
+            }, 250);
         }
         
         function isFlashingAllowed() {
