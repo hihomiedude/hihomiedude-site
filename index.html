@@ -299,7 +299,7 @@
     </div>
     
     <audio id="bgMusic" loop>
-        <source src="clarity.mp3#t=0.5" type="audio/mpeg">
+        <source src="clarity.mp3" type="audio/mpeg">
     </audio>
     
     <script>
@@ -319,10 +319,12 @@
         
         // Bass detection variables
         let lastFlashTime = 0;
-        const FLASH_COOLDOWN = 150; // 0.15 seconds in milliseconds
-        let previousBarsState = [];
-        const JUMP_THRESHOLD = 0.25; // How much the bars need to jump (0-1) - lowered for more sensitivity
-        const BARS_TO_CHECK = 7; // Check leftmost 7 bars
+        const FLASH_COOLDOWN = 50; // 50ms debounce - very short
+        let previousFrequencyData = null;
+        let energyHistory = [];
+        const ENERGY_HISTORY_SIZE = 43; // ~1 second at 60fps
+        const BASS_BINS = 4; // Focus on first 4 frequency bins for bass
+        const ENERGY_MULTIPLIER = 1.5; // How much above average energy triggers flash
         
         // Remove autoplay, start with manual trigger
         muteBtn.textContent = '[play]';
@@ -381,41 +383,47 @@
             lastFlashTime = currentTime;
         }
         
-        function detectBarsJump(dataArray) {
-            // Get current state of leftmost bars
-            const currentBarsState = [];
-            for (let i = 0; i < BARS_TO_CHECK; i++) {
-                currentBarsState[i] = dataArray[i] / 255; // Normalize to 0-1
+        function detectBassHit(dataArray) {
+            // Calculate current bass energy
+            let currentBassEnergy = 0;
+            for (let i = 0; i < BASS_BINS; i++) {
+                currentBassEnergy += Math.pow(dataArray[i] / 255, 2);
+            }
+            currentBassEnergy = currentBassEnergy / BASS_BINS;
+            
+            // Add to history
+            energyHistory.push(currentBassEnergy);
+            if (energyHistory.length > ENERGY_HISTORY_SIZE) {
+                energyHistory.shift();
             }
             
-            // Skip if we don't have previous state yet
-            if (previousBarsState.length === 0) {
-                previousBarsState = currentBarsState;
+            // Need enough history to calculate average
+            if (energyHistory.length < 10) {
                 return;
             }
             
-            // Count how many bars jumped significantly
-            let jumpedBars = 0;
-            for (let i = 0; i < BARS_TO_CHECK; i++) {
-                const jump = currentBarsState[i] - previousBarsState[i];
-                if (jump > JUMP_THRESHOLD) {
-                    jumpedBars++;
+            // Calculate average energy
+            const averageEnergy = energyHistory.reduce((a, b) => a + b, 0) / energyHistory.length;
+            
+            // Detect if current energy significantly exceeds average
+            if (currentBassEnergy > averageEnergy * ENERGY_MULTIPLIER && currentBassEnergy > 0.1) {
+                // Also check for sudden rise (beat transient)
+                if (previousFrequencyData) {
+                    let previousBassEnergy = 0;
+                    for (let i = 0; i < BASS_BINS; i++) {
+                        previousBassEnergy += Math.pow(previousFrequencyData[i] / 255, 2);
+                    }
+                    previousBassEnergy = previousBassEnergy / BASS_BINS;
+                    
+                    // Only flash if there's a significant rise
+                    if (currentBassEnergy > previousBassEnergy * 1.3) {
+                        flashBackground();
+                    }
                 }
             }
             
-            // Flash if majority of bars jumped (at least 4 out of 7)
-            // Also consider average jump magnitude for better detection
-            let totalJump = 0;
-            for (let i = 0; i < BARS_TO_CHECK; i++) {
-                totalJump += Math.max(0, currentBarsState[i] - previousBarsState[i]);
-            }
-            const averageJump = totalJump / BARS_TO_CHECK;
-            
-            if (jumpedBars >= 4 || (jumpedBars >= 3 && averageJump > 0.3)) {
-                flashBackground();
-            }
-            
-            previousBarsState = currentBarsState;
+            // Store current data for next frame
+            previousFrequencyData = new Uint8Array(dataArray);
         }
         
         function drawVisualizer() {
@@ -425,8 +433,8 @@
             
             analyser.getByteFrequencyData(dataArray);
             
-            // Detect bars jump for background flash
-            detectBarsJump(dataArray);
+            // Detect bass hits for background flash
+            detectBassHit(dataArray);
             
             ctx.fillStyle = '#1a1a1a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
