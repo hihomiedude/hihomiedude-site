@@ -344,7 +344,7 @@
             border: 5px solid #ffffff;
             box-sizing: border-box;
             display: none;
-            pointer-events: none;
+            cursor: pointer;
         }
         
         .song-info {
@@ -522,10 +522,13 @@
         
         function startSeizureWarning() {
             const seizureWarning = document.getElementById('seizureWarning');
-            seizureWarning.style.display = 'block';
+            seizureWarning.style.display = 'flex';
             let countdown = 5;
             
             seizureWarning.textContent = `SEIZURE WARNING (${countdown})`;
+            
+            // Add click listener to pause music
+            seizureWarning.addEventListener('click', pauseMusicFromWarning);
             
             warningInterval = setInterval(() => {
                 countdown--;
@@ -533,17 +536,31 @@
                     seizureWarning.textContent = `SEIZURE WARNING (${countdown})`;
                 } else {
                     seizureWarning.style.display = 'none';
+                    seizureWarning.removeEventListener('click', pauseMusicFromWarning);
                     clearInterval(warningInterval);
                     warningInterval = null;
                 }
             }, 1000);
         }
         
+        function pauseMusicFromWarning() {
+            audio.pause();
+            muteBtn.textContent = '[play]';
+            hideMusicElements();
+            stopSeizureWarning();
+            
+            // Show play section again and restore rainbow effect
+            document.getElementById('playSection').style.display = 'block';
+            muteBtn.classList.add('rainbow-text');
+        }
+        
         function stopSeizureWarning() {
             if (warningInterval) {
                 clearInterval(warningInterval);
                 warningInterval = null;
-                document.getElementById('seizureWarning').style.display = 'none';
+                const seizureWarning = document.getElementById('seizureWarning');
+                seizureWarning.style.display = 'none';
+                seizureWarning.removeEventListener('click', pauseMusicFromWarning);
             }
         }
         
