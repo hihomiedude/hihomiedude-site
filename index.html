@@ -376,6 +376,16 @@
             font-weight: normal;
             margin-top: 10px;
             color: #cccccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .seizure-warning-lulw {
+            height: 1em;
+            width: auto;
+            display: inline-block;
         }
         
         .song-info {
@@ -443,7 +453,10 @@
         <canvas id="visualizer" width="400" height="100"></canvas>
         <div class="seizure-warning" id="seizureWarning">
             <div id="seizureWarningText">SEIZURE WARNING (5)</div>
-            <div class="seizure-warning-small">hihomiedude LULW</div>
+            <div class="seizure-warning-small">
+                <span>hihomiedude</span>
+                <img src="assets/images/LULW.png" alt="LULW" class="seizure-warning-lulw">
+            </div>
         </div>
     </div>
     
