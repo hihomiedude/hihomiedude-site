@@ -25,7 +25,6 @@
             align-items: center;
             padding: 20px;
             position: relative;
-            transition: background-color 0.05s ease-out;
         }
         
         .header {
@@ -365,41 +364,27 @@
             ctx.fillStyle = '#1a1a1a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Use 48 bars (removing the rightmost 1/4)
-            const barsToShow = 48;
-            const barWidth = canvas.width / barsToShow - 1;
+            // Only show first 64 bins for better visualization
+            const barsToShow = 64;
+            const barWidth = canvas.width / barsToShow - 2;
             let x = 0;
             
-            // Track if bass is hitting hard
-            let bassHitRed = false;
-            
             for (let i = 0; i < barsToShow; i++) {
-                // Sample more bins for higher frequencies
-                let binIndex = i;
-                if (i > 32) {
-                    // For bars 33-48, sample from higher frequency bins
-                    binIndex = Math.floor(i * 1.5);
-                }
-                
-                let value = dataArray[binIndex];
+                let value = dataArray[i];
                 
                 // Progressive frequency scaling - boost higher frequencies more
-                const freqScaling = 1 + (i / barsToShow) * 0.8; // Scale from 1x to 1.8x
+                const freqScaling = 1 + (i / barsToShow) * 1.5; // Scale from 1x to 2.5x
                 value = value * freqScaling;
                 
                 // Additional bass boost for low frequencies
-                if (i < 4) {
+                if (i < 8) {
                     value = value * 1.2;  // Very low bass
-                } else if (i < 8) {
+                } else if (i < 16) {
                     value = value * 1.1;  // Mid bass
                 }
                 
                 // Apply slight exponential scaling for smoother response
                 value = Math.pow(value / 255, 1.5) * 255;
-                
-                // Linear sensitivity scaling - higher frequencies are more sensitive
-                const sensitivityScale = 1 + (i / barsToShow) * 2; // Scale from 1x to 3x
-                value = Math.min(value * sensitivityScale, 255);
                 
                 // Always have minimum height of 10%, regardless of signal
                 const normalizedValue = value / 255;
@@ -426,20 +411,7 @@
                 ctx.fillStyle = `rgb(${r},${g},${b})`;
                 ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
                 
-                // Check if bass frequencies (first 8 bars) are hitting red
-                if (i < 8 && percent >= 0.8) {
-                    bassHitRed = true;
-                }
-                
-                x += barWidth + 1;
-            }
-            
-            // Flash background white on bass hits
-            if (bassHitRed) {
-                document.body.style.backgroundColor = '#ffffff';
-                setTimeout(() => {
-                    document.body.style.backgroundColor = '#1a1a1a';
-                }, 50);
+                x += barWidth + 2;
             }
         }
         
