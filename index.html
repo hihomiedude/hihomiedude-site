@@ -488,7 +488,7 @@
             </div>
             
             <div class="audio-controls" id="audioControls" style="display: none;">
-                <button class="mute-button" id="muteBtn2">[pause]</button>
+                <button class="mute-button rainbow-text" id="muteBtn2">[ pause ]</button>
             </div>
             
             <div class="link-item">
@@ -684,7 +684,7 @@
         
         function pauseMusicFromWarning() {
             audio.pause();
-            muteBtn.textContent = '[play]';
+            muteBtn.textContent = '[ play ]';
             hideMusicElements();
             stopSeizureWarning();
             
@@ -881,7 +881,7 @@
                     document.getElementById('playSection').style.display = 'none';
                     document.getElementById('audioControls').style.display = 'block';
                     
-                    muteBtn.textContent = '[pause]';
+                    muteBtn.textContent = '[ pause ]';
                     muteBtn.style.backgroundColor = '#333';
                     muteBtn.classList.remove('rainbow-text');
                     
@@ -894,12 +894,12 @@
                         showMusicElements();
                     }
                 }).catch(() => {
-                    muteBtn.textContent = '[blocked]';
+                    muteBtn.textContent = '[ blocked ]';
                 });
             } else {
                 // Pause audio
                 audio.pause();
-                muteBtn.textContent = '[play]';
+                muteBtn.textContent = '[ play ]';
                 hideMusicElements();
                 stopSeizureWarning(); // Stop warning when pausing
                 
@@ -921,7 +921,7 @@
         // Hide elements when audio ends
         audio.addEventListener('ended', function() {
             hideMusicElements();
-            muteBtn.textContent = '[play]';
+            muteBtn.textContent = '[ play ]';
             document.getElementById('playSection').style.display = 'block';
             document.getElementById('audioControls').style.display = 'none';
             muteBtn.classList.add('rainbow-text');
@@ -930,7 +930,7 @@
         // Second pause button functionality
         document.getElementById('muteBtn2').addEventListener('click', function() {
             audio.pause();
-            muteBtn.textContent = '[play]';
+            muteBtn.textContent = '[ play ]';
             hideMusicElements();
             stopSeizureWarning();
             
