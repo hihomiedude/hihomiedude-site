@@ -25,6 +25,7 @@
             align-items: center;
             padding: 20px;
             position: relative;
+            transition: background-color 0.3s ease-out;
         }
         
         .header {
@@ -287,7 +288,7 @@
             </div>
             
             <div class="audio-controls">
-                <button class="mute-button" id="muteBtn">🔊 Mute</button>
+                <button class="mute-button" id="muteBtn">[mute]</button>
             </div>
         </div>
         
@@ -316,8 +317,14 @@
         let dataArray;
         const BPM = 134;
         
+        // Bass detection variables
+        let lastFlashTime = 0;
+        const FLASH_COOLDOWN = 200; // 0.2 seconds in milliseconds
+        let previousBassAverage = 0;
+        const BASS_THRESHOLD = 0.7; // Threshold for detecting bass hit (0-1)
+        
         // Remove autoplay, start with manual trigger
-        muteBtn.textContent = '▶ play';
+        muteBtn.textContent = '[play]';
         muteBtn.style.backgroundColor = '#333';
         
         function initAudioContext() {
@@ -354,12 +361,52 @@
             document.getElementById('ratJam').classList.remove('show');
         }
         
+        function flashBackground() {
+            const currentTime = Date.now();
+            
+            // Check if enough time has passed since last flash
+            if (currentTime - lastFlashTime < FLASH_COOLDOWN) {
+                return;
+            }
+            
+            // Flash the background white
+            document.body.style.backgroundColor = '#ffffff';
+            
+            // Fade back to original color
+            setTimeout(() => {
+                document.body.style.backgroundColor = '#1a1a1a';
+            }, 100);
+            
+            lastFlashTime = currentTime;
+        }
+        
+        function detectBassHit(dataArray) {
+            // Monitor first 3 frequency bins for bass
+            let bassSum = 0;
+            for (let i = 0; i < 3; i++) {
+                bassSum += dataArray[i];
+            }
+            
+            // Calculate average bass level (normalized to 0-1)
+            const bassAverage = bassSum / (3 * 255);
+            
+            // Detect a significant jump in bass (bass hit)
+            if (bassAverage > BASS_THRESHOLD && bassAverage > previousBassAverage * 1.3) {
+                flashBackground();
+            }
+            
+            previousBassAverage = bassAverage;
+        }
+        
         function drawVisualizer() {
             if (!analyser || audio.paused) return;
             
             requestAnimationFrame(drawVisualizer);
             
             analyser.getByteFrequencyData(dataArray);
+            
+            // Detect bass hits for background flash
+            detectBassHit(dataArray);
             
             ctx.fillStyle = '#1a1a1a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -423,7 +470,7 @@
                 // Start playing immediately
                 audio.play().then(() => {
                     audioStarted = true;
-                    muteBtn.textContent = '❚❚ pause';
+                    muteBtn.textContent = '[pause]';
                     muteBtn.style.backgroundColor = '#333';
                     
                     // Force audio context to resume and start visualizer immediately
@@ -435,12 +482,12 @@
                         showMusicElements();
                     }
                 }).catch(() => {
-                    muteBtn.textContent = '▶ blocked';
+                    muteBtn.textContent = '[blocked]';
                 });
             } else {
                 // Pause audio
                 audio.pause();
-                muteBtn.textContent = '▶ play';
+                muteBtn.textContent = '[play]';
                 hideMusicElements();
             }
         });
@@ -456,7 +503,7 @@
         // Hide elements when audio ends
         audio.addEventListener('ended', function() {
             hideMusicElements();
-            muteBtn.textContent = '▶ play';
+            muteBtn.textContent = '[play]';
         });
     </script>
 </body>
