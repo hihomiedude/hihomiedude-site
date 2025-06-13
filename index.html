@@ -25,6 +25,7 @@
             align-items: center;
             padding: 20px;
             position: relative;
+            transition: background-color 0.05s ease-out;
         }
         
         .header {
@@ -369,6 +370,9 @@
             const barWidth = canvas.width / barsToShow - 1;
             let x = 0;
             
+            // Track if bass is hitting hard
+            let bassHitRed = false;
+            
             for (let i = 0; i < barsToShow; i++) {
                 // Sample more bins for higher frequencies
                 let binIndex = i;
@@ -422,7 +426,20 @@
                 ctx.fillStyle = `rgb(${r},${g},${b})`;
                 ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
                 
+                // Check if bass frequencies (first 8 bars) are hitting red
+                if (i < 8 && percent >= 0.8) {
+                    bassHitRed = true;
+                }
+                
                 x += barWidth + 1;
+            }
+            
+            // Flash background white on bass hits
+            if (bassHitRed) {
+                document.body.style.backgroundColor = '#ffffff';
+                setTimeout(() => {
+                    document.body.style.backgroundColor = '#1a1a1a';
+                }, 50);
             }
         }
         
