@@ -109,6 +109,7 @@
             justify-content: center;
             gap: 30px;
             overflow: visible;
+            transition: background-color 0.05s ease-out, transform 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         
         .lulw-img {
@@ -251,8 +252,8 @@
                 filter: brightness(1);
             }
             50% {
-                transform: scale(1.6) translateY(-15px);
-                filter: brightness(1.15);
+                transform: scale(2.0) translateY(-20px);
+                filter: brightness(1.2);
             }
             100% {
                 transform: scale(1) translateY(0);
@@ -266,8 +267,8 @@
                 filter: brightness(1);
             }
             50% {
-                transform: scale(1.6) translateY(15px);
-                filter: brightness(1.15);
+                transform: scale(2.0) translateY(20px);
+                filter: brightness(1.2);
             }
             100% {
                 transform: scale(1) translateY(0);
@@ -283,8 +284,8 @@
                     filter: brightness(1);
                 }
                 50% {
-                    transform: scale(1.3) translateY(-5px);
-                    filter: brightness(1.15);
+                    transform: scale(1.5) translateY(-8px);
+                    filter: brightness(1.2);
                 }
                 100% {
                     transform: scale(1) translateY(0);
@@ -298,8 +299,8 @@
                     filter: brightness(1);
                 }
                 50% {
-                    transform: scale(1.3) translateY(5px);
-                    filter: brightness(1.15);
+                    transform: scale(1.5) translateY(8px);
+                    filter: brightness(1.2);
                 }
                 100% {
                     transform: scale(1) translateY(0);
@@ -314,6 +315,22 @@
         
         .thump-down {
             animation: bass-thump-down 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .side-image-thump {
+            animation: side-box-thump 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes side-box-thump {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
         
         .audio-controls {
@@ -687,6 +704,23 @@
         
         function thumpImages() {
             const images = document.querySelectorAll('.lulw-img, .dancing-img');
+            const sideBoxes = document.querySelectorAll('.side-image');
+            
+            // Array of colors different from the body flash colors
+            const boxFlashColors = [
+                '#00FF00', // Lime
+                '#FF00FF', // Magenta
+                '#00FFFF', // Cyan
+                '#FFFF00', // Yellow
+                '#FF1493', // Deep pink
+                '#7FFF00', // Chartreuse
+                '#FF69B4', // Hot pink
+                '#00CED1', // Dark turquoise
+                '#98FB98', // Pale green
+                '#FFB6C1', // Light pink
+                '#87CEEB', // Sky blue
+                '#FF6EC7', // Neon pink
+            ];
             
             images.forEach((img, index) => {
                 // Remove any existing thump classes
@@ -700,6 +734,24 @@
                 } else {
                     img.classList.add('thump-down');
                 }
+            });
+            
+            // Flash side boxes with different colors
+            sideBoxes.forEach((box) => {
+                // Remove existing thump class
+                box.classList.remove('side-image-thump');
+                // Force reflow
+                box.offsetHeight;
+                
+                // Pick random color for this box
+                const boxColor = boxFlashColors[Math.floor(Math.random() * boxFlashColors.length)];
+                box.style.backgroundColor = boxColor;
+                box.classList.add('side-image-thump');
+                
+                // Reset after animation
+                setTimeout(() => {
+                    box.style.backgroundColor = '#2d2d2d';
+                }, 250);
             });
         }
         
