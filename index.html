@@ -576,8 +576,8 @@
         let fluxHistory = [];
         const FLUX_HISTORY_SIZE = 20; // Shorter history for faster adaptation
         const BASS_BINS = 4; // Focus only on deep bass frequencies
-        const FLUX_THRESHOLD = 1.6; // Lower threshold for more sensitivity
-        const MIN_FLUX = 0.15; // Lower minimum flux for rapid hits
+        const FLUX_THRESHOLD = 1.3; // Lower threshold for more sensitivity
+        const MIN_FLUX = 0.08; // Much lower minimum flux for rapid hits
         
         // Time-based flash gating (start, end times in seconds)
         const FLASH_TIME_RANGES = [
@@ -862,8 +862,8 @@
             
             // Use adaptive thresholds - much more sensitive for consecutive hits
             const baseThreshold = averageFlux * FLUX_THRESHOLD * volumeMultiplier;
-            const rapidThreshold = recentFlux * 0.95 * volumeMultiplier; // Even more sensitive for recent hits
-            const immediateThreshold = immediateFlux * 0.75 * volumeMultiplier; // Much more sensitive for immediate succession
+            const rapidThreshold = recentFlux * 0.8 * volumeMultiplier; // Much more sensitive for recent hits
+            const immediateThreshold = immediateFlux * 0.6 * volumeMultiplier; // Very sensitive for immediate succession
             const threshold = Math.max(Math.min(baseThreshold, Math.min(rapidThreshold, immediateThreshold)), MIN_FLUX * volumeMultiplier);
             
             // Detect beat if flux exceeds threshold AND bars 2-5 are pumping
@@ -875,7 +875,7 @@
             const avgBassLevel = bassSum / BASS_BARS_TO_CHECK;
             
             // Lower bass level requirement during loud sections
-            const bassLevelThreshold = overallVolume > 0.5 ? 0.35 : 0.45;
+            const bassLevelThreshold = overallVolume > 0.5 ? 0.25 : 0.35;
             
             if (flux > threshold && flux > MIN_FLUX * volumeMultiplier && avgBassLevel > bassLevelThreshold && isFlashingAllowed()) {
                 flashBackground();
