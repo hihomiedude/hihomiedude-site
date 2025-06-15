@@ -803,6 +803,13 @@
                 return;
             }
             
+            // Calculate overall volume level (RMS of all frequencies)
+            let totalEnergy = 0;
+            for (let i = 0; i < 64; i++) { // Check first 64 bins for overall volume
+                totalEnergy += Math.pow(dataArray[i] / 255, 2);
+            }
+            const overallVolume = Math.sqrt(totalEnergy / 64);
+            
             // Calculate spectral flux (sum of positive differences)
             let flux = 0;
             for (let i = 0; i < BASS_BINS; i++) {
@@ -816,7 +823,22 @@
                 }
             }
             
-            // Remove mid frequency detection - focus only on bass
+            // During loud sections, also consider absolute bass level changes
+            if (overallVolume > 0.5) { // Loud section
+                // Calculate absolute bass energy
+                let currentBassEnergy = 0;
+                let previousBassEnergy = 0;
+                for (let i = 0; i < BASS_BINS; i++) {
+                    currentBassEnergy += Math.pow(dataArray[i] / 255, 2);
+                    previousBassEnergy += Math.pow(previousSpectrum[i], 2);
+                }
+                
+                // Add normalized bass energy change to flux
+                const bassEnergyChange = Math.sqrt(currentBassEnergy) - Math.sqrt(previousBassEnergy);
+                if (bassEnergyChange > 0) {
+                    flux += bassEnergyChange * 0.5; // Weight it less than spectral flux
+                }
+            }
             
             // Store flux in history
             fluxHistory.push(flux);
@@ -835,11 +857,14 @@
             const recentFlux = fluxHistory.slice(-3).reduce((a, b) => a + b, 0) / Math.min(3, fluxHistory.length);
             const immediateFlux = fluxHistory.slice(-2).reduce((a, b) => a + b, 0) / Math.min(2, fluxHistory.length);
             
+            // Adjust sensitivity based on volume - more sensitive during loud sections
+            const volumeMultiplier = overallVolume > 0.5 ? 0.7 : 1.0; // Lower threshold when loud
+            
             // Use adaptive thresholds - much more sensitive for consecutive hits
-            const baseThreshold = averageFlux * FLUX_THRESHOLD;
-            const rapidThreshold = recentFlux * 0.95; // Even more sensitive for recent hits
-            const immediateThreshold = immediateFlux * 0.75; // Much more sensitive for immediate succession
-            const threshold = Math.max(Math.min(baseThreshold, Math.min(rapidThreshold, immediateThreshold)), MIN_FLUX);
+            const baseThreshold = averageFlux * FLUX_THRESHOLD * volumeMultiplier;
+            const rapidThreshold = recentFlux * 0.95 * volumeMultiplier; // Even more sensitive for recent hits
+            const immediateThreshold = immediateFlux * 0.75 * volumeMultiplier; // Much more sensitive for immediate succession
+            const threshold = Math.max(Math.min(baseThreshold, Math.min(rapidThreshold, immediateThreshold)), MIN_FLUX * volumeMultiplier);
             
             // Detect beat if flux exceeds threshold AND bars 2-5 are pumping
             let bassSum = 0;
@@ -849,7 +874,10 @@
             }
             const avgBassLevel = bassSum / BASS_BARS_TO_CHECK;
             
-            if (flux > threshold && flux > MIN_FLUX && avgBassLevel > 0.45 && isFlashingAllowed()) {
+            // Lower bass level requirement during loud sections
+            const bassLevelThreshold = overallVolume > 0.5 ? 0.35 : 0.45;
+            
+            if (flux > threshold && flux > MIN_FLUX * volumeMultiplier && avgBassLevel > bassLevelThreshold && isFlashingAllowed()) {
                 flashBackground();
             }
             
