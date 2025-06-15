@@ -877,7 +877,15 @@
             // Lower bass level requirement during loud sections
             const bassLevelThreshold = overallVolume > 0.5 ? 0.25 : 0.35;
             
-            if (flux > threshold && flux > MIN_FLUX * volumeMultiplier && avgBassLevel > bassLevelThreshold && isFlashingAllowed()) {
+            // Additional validation: ensure actual bass content exists
+            const maxBassValue = Math.max(dataArray[0], dataArray[1], dataArray[2], dataArray[3]) / 255;
+            const hasSufficientBass = maxBassValue > 0.5; // At least one bass bin must be > 50%
+            
+            // Check for minimum flux change to avoid noise triggers
+            const isSignificantFlux = flux > MIN_FLUX * 1.5; // Require 1.5x minimum for validation
+            
+            if (flux > threshold && flux > MIN_FLUX * volumeMultiplier && avgBassLevel > bassLevelThreshold && 
+                hasSufficientBass && isSignificantFlux && isFlashingAllowed()) {
                 flashBackground();
             }
             
