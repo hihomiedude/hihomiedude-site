@@ -813,9 +813,10 @@
             muteBtn.textContent = '[ play ]';
             hideMusicElements();
             stopSeizureWarning();
-            
+
             // Show play section again and restore rainbow effect
             document.getElementById('playSection').style.display = 'block';
+            document.getElementById('audioControls').style.display = 'none';
             muteBtn.classList.add('rainbow-text');
         }
         
